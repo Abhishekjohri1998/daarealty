@@ -1,0 +1,5 @@
+{
+  "name": "DAA Realty",
+  "description": "A modern real estate platform with a React frontend, Node.js/Express backend, and MongoDB integration.",
+  "requestFramePermissions": []
+}
