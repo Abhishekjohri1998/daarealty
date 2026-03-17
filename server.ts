@@ -39,6 +39,8 @@ app.use((req, res, next) => {
 import { AdminUser } from "./models/AdminUser";
 import { Listing } from "./models/Listing";
 import { Content } from "./models/Content";
+import { Inquiry } from "./models/Inquiry";
+import { Newsletter } from "./models/Newsletter";
 // --- Models ---
 
 // --- Auth Middleware ---
@@ -55,6 +57,57 @@ const authenticateAdmin = (req: any, res: any, next: any) => {
 };
 
 // --- API Routes (Prefix with /api) ---
+
+// Contact & Inquiries
+app.post("/api/contact", async (req, res) => {
+  try {
+    const inquiry = new Inquiry(req.body);
+    await inquiry.save();
+    
+    // TODO: Implement Nodemailer sending here when App Password is provided
+    // 1. Send confirmation to user
+    // 2. Send notification to daarealty@outlook.com
+    
+    res.json({ message: "Inquiry received successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to process inquiry" });
+  }
+});
+
+app.get("/api/admin/inquiries", authenticateAdmin, async (req, res) => {
+  try {
+    const inquiries = await Inquiry.find().sort({ createdAt: -1 });
+    res.json(inquiries);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch inquiries" });
+  }
+});
+
+// Newsletter
+app.post("/api/newsletter", async (req, res) => {
+  try {
+    const newsletter = new Newsletter(req.body);
+    await newsletter.save();
+    
+    // TODO: Implement Nodemailer confirmation here
+    
+    res.json({ message: "Signed up successfully" });
+  } catch (err) {
+    if ((err as any).code === 11000) {
+      return res.status(400).json({ error: "Email already subscribed" });
+    }
+    res.status(500).json({ error: "Failed to sign up" });
+  }
+});
+
+app.get("/api/admin/newsletters", authenticateAdmin, async (req, res) => {
+  try {
+    const subscribers = await Newsletter.find().sort({ signedUpAt: -1 });
+    res.json(subscribers);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch subscribers" });
+  }
+});
 
 // Ping for connectivity check
 app.get("/api/ping", (req, res) => {

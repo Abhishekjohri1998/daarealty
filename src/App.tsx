@@ -224,14 +224,16 @@ const Footer = () => {
           <div>
             <h4 className="text-[10px] tracking-[0.2em] font-bold text-stone-400 mb-8 uppercase">Connect</h4>
             <div className="flex gap-4 mb-8">
-              <a href="#" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Twitter className="w-4 h-4"/></a>
-              <a href="#" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Instagram className="w-4 h-4"/></a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Facebook className="w-4 h-4"/></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Instagram className="w-4 h-4"/></a>
+              <a href="https://wa.me/919910732010" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+              </a>
             </div>
             <p className="text-stone-500 dark:text-stone-400 text-xs mb-4">Sign up for updates</p>
-            <div className="flex">
-              <input type="email" placeholder="Your email" className="bg-surface border border-border px-4 py-2 text-sm w-full focus:outline-none focus:border-[#E65E19] text-foreground"/>
-              <button className="bg-[#E65E19] text-white px-4 py-2 text-xs font-bold uppercase tracking-wider">Join</button>
-            </div>
+            <NewsletterSignup />
           </div>
         </div>
 
@@ -245,6 +247,58 @@ const Footer = () => {
         </div>
       </div>
     </footer>
+  );
+};
+
+const NewsletterSignup = () => {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus('');
+    try {
+      const res = await fetch(getApiUrl('/api/newsletter'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatus('Success! Thank you for joining.');
+        setEmail('');
+      } else {
+        setStatus(data.error || 'Signup failed. Please try again.');
+      }
+    } catch (err) {
+      setStatus('Server connection failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSignup} className="space-y-2">
+      <div className="flex">
+        <input 
+          type="email" 
+          placeholder="Your email" 
+          required
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className="bg-surface border border-border px-4 py-2 text-sm w-full focus:outline-none focus:border-[#E65E19] text-foreground"
+        />
+        <button 
+          disabled={loading}
+          className="bg-[#E65E19] text-white px-4 py-2 text-xs font-bold uppercase tracking-wider disabled:opacity-50"
+        >
+          {loading ? '...' : 'Join'}
+        </button>
+      </div>
+      {status && <p className={`text-[10px] uppercase font-bold tracking-tight ${status.includes('Success') ? 'text-green-500' : 'text-[#E65E19]'}`}>{status}</p>}
+    </form>
   );
 };
 
@@ -930,7 +984,9 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
   const [listings, setListings] = useState<any[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'listings' | 'media'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'listings' | 'media' | 'inquiries' | 'newsletters'>('dashboard');
+  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [newsletters, setNewsletters] = useState<any[]>([]);
   const [newProp, setNewProp] = useState<any>({
     title: '',
     price: '₹',
@@ -946,10 +1002,24 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
 
   useEffect(() => {
     fetchListings();
+    fetchInquiries();
+    fetchNewsletters();
   }, []);
 
   const fetchListings = () => {
     fetch(getApiUrl('/api/listings')).then(res => res.json()).then(setListings);
+  };
+
+  const fetchInquiries = () => {
+    fetch(getApiUrl('/api/admin/inquiries'), {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(res => res.json()).then(setInquiries).catch(() => {});
+  };
+
+  const fetchNewsletters = () => {
+    fetch(getApiUrl('/api/admin/newsletters'), {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(res => res.json()).then(setNewsletters).catch(() => {});
   };
 
   const addListing = async (e: React.FormEvent) => {
@@ -1009,11 +1079,23 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
           >
             <Database className="w-5 h-5"/> Listings
           </button>
-          <button
+            <button
             onClick={() => setActiveTab('media')}
             className={`flex items-center gap-3 w-full p-4 rounded-xl transition-all font-bold ${activeTab === 'media' ? 'bg-[#E65E19] shadow-lg text-white' : 'text-stone-400 hover:text-white'}`}
           >
             <ImageIcon className="w-5 h-5"/> Media
+          </button>
+          <button
+            onClick={() => setActiveTab('inquiries')}
+            className={`flex items-center gap-3 w-full p-4 rounded-xl transition-all font-bold ${activeTab === 'inquiries' ? 'bg-[#E65E19] shadow-lg text-white' : 'text-stone-400 hover:text-white'}`}
+          >
+            <Mail className="w-5 h-5"/> Inquiries
+          </button>
+          <button
+            onClick={() => setActiveTab('newsletters')}
+            className={`flex items-center gap-3 w-full p-4 rounded-xl transition-all font-bold ${activeTab === 'newsletters' ? 'bg-[#E65E19] shadow-lg text-white' : 'text-stone-400 hover:text-white'}`}
+          >
+            <Phone className="w-5 h-5"/> Newsletters
           </button>
         </nav>
         <button onClick={logout} className="flex items-center gap-3 w-full p-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all font-bold uppercase"><LogOut className="w-5 h-5"/> Logout</button>
@@ -1028,13 +1110,13 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
       </div>
 
       <main className="flex-grow p-8 md:p-12 overflow-y-auto">
-        <header className="flex justify-between items-center mb-12">
+          <header className="flex justify-between items-center mb-12">
           <div className="text-foreground">
             <h1 className="text-3xl font-serif font-bold uppercase tracking-tight">
-              {activeTab === 'dashboard' ? 'Overview' : activeTab === 'listings' ? 'Listing Management' : 'Media Library'}
+              {activeTab === 'dashboard' ? 'Overview' : activeTab === 'listings' ? 'Listing Management' : activeTab === 'media' ? 'Media Library' : activeTab === 'inquiries' ? 'Inquiries' : 'Newsletter Subscribers'}
             </h1>
             <p className="text-stone-500 dark:text-stone-400">
-              {activeTab === 'dashboard' ? 'Welcome to your DAA Realty dashboard' : activeTab === 'listings' ? 'Managing properties on daarealty.in' : 'All property images and assets'}
+              {activeTab === 'dashboard' ? 'Welcome to your DAA Realty dashboard' : activeTab === 'listings' ? 'Managing properties on daarealty.in' : activeTab === 'media' ? 'All property images and assets' : activeTab === 'inquiries' ? 'Active inquiries and leads' : 'List of users signed up for updates'}
             </p>
           </div>
           {activeTab === 'listings' && (
@@ -1056,7 +1138,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
             </div>
             <div className="bg-surface p-8 rounded-3xl border border-border">
               <h3 className="text-stone-400 text-xs font-bold uppercase tracking-widest mb-2">Active Inquiries</h3>
-              <p className="text-4xl font-serif font-bold text-foreground">12</p>
+              <p className="text-4xl font-serif font-bold text-foreground">{inquiries.length}</p>
             </div>
           </div>
         )}
@@ -1080,6 +1162,57 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {activeTab === 'inquiries' && (
+          <div className="space-y-6">
+            {inquiries.map((inq, i) => (
+              <div key={i} className="bg-surface p-8 rounded-3xl border border-border space-y-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xl font-bold uppercase tracking-tight">{inq.firstName} {inq.lastName}</h3>
+                    <p className="text-stone-500 text-sm">{inq.email} • {inq.phone}</p>
+                  </div>
+                  <span className="bg-[#E65E19]/10 text-[#E65E19] px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                    {inq.interest}
+                  </span>
+                </div>
+                <div className="bg-background p-6 rounded-2xl border border-border">
+                  <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed italic">"{inq.message}"</p>
+                </div>
+                <div className="text-[10px] text-stone-400 uppercase font-bold tracking-[0.2em]">
+                  Received: {new Date(inq.createdAt).toLocaleString()}
+                </div>
+              </div>
+            ))}
+            {inquiries.length === 0 && (
+              <div className="text-center py-20 opacity-50 italic">No inquiries found yet.</div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'newsletters' && (
+          <div className="bg-surface rounded-3xl border border-border overflow-hidden">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-border bg-background/50">
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-stone-400">Email Address</th>
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-stone-400">Signup Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {newsletters.map((sub, i) => (
+                  <tr key={i} className="border-b border-border last:border-0 hover:bg-background/20">
+                    <td className="p-6 text-sm font-bold text-foreground">{sub.email}</td>
+                    <td className="p-6 text-sm text-stone-500">{new Date(sub.signedUpAt).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {newsletters.length === 0 && (
+              <div className="p-20 text-center opacity-50 italic">No newsletter subscribers yet.</div>
+            )}
           </div>
         )}
 
@@ -1506,13 +1639,13 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
         body: JSON.stringify(formData)
       });
       if (res.ok) {
-        setStatus('Message sent successfully!');
+        setStatus('Thank you! Your inquiry has been sent successfully.');
         setFormData({ firstName: '', lastName: '', email: '', phone: '', interest: 'Buying Property', message: '' });
       } else {
-        setStatus('Error sending message. Please try again.');
+        setStatus('Failed to send inquiry. Please try again.');
       }
     } catch (err) {
-      setStatus('Error sending message. Please try again.');
+      setStatus('Server connection failed.');
     }
   };
 
