@@ -101,7 +101,6 @@ const upload = multer({
   storage: s3 ? multerS3({
     s3: s3,
     bucket: process.env.AWS_S3_BUCKET || "daa-realty-assets",
-    acl: "public-read",
     metadata: (req, file, cb) => {
       cb(null, { fieldName: file.fieldname });
     },

@@ -776,10 +776,16 @@ const AdminLogin = ({ setToken }: { setToken: (t: string) => void }) => {
 const FileUploader = ({ onUpload, token }: { onUpload: (urls: string[]) => void, token: string }) => {
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [previews, setPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = async (files: FileList) => {
     setUploading(true);
+    
+    // Create local previews immediately
+    const localPreviews = Array.from(files).map(file => URL.createObjectURL(file));
+    setPreviews(prev => [...prev, ...localPreviews]);
+
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
         formData.append('images', files[i]);
@@ -807,26 +813,47 @@ const FileUploader = ({ onUpload, token }: { onUpload: (urls: string[]) => void,
       }
 
       const data = await res.json();
-      if (data.urls) onUpload(data.urls);
+      if (data.urls) {
+        onUpload(data.urls);
+        // Clear previews once uploaded
+        setPreviews([]);
+      }
     } catch (err) {
       console.error("Upload failed:", err);
+      // Remove previews on failure
+      setPreviews([]);
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div
-      onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={(e) => { e.preventDefault(); setDragging(false); if (e.dataTransfer.files) handleFiles(e.dataTransfer.files); }}
-      onClick={() => fileInputRef.current?.click()}
-      className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${dragging ? 'border-[#E65E19] bg-[#E65E19]/5' : 'border-border hover:border-[#E65E19]/50'}`}
-    >
-      <input type="file" multiple className="hidden" ref={fileInputRef} onChange={(e) => e.target.files && handleFiles(e.target.files)} accept="image/*" />
-      <Upload className={`w-10 h-10 mx-auto mb-4 ${uploading ? 'animate-bounce text-[#E65E19]' : 'text-stone-400'}`} />
-      <p className="text-sm font-bold uppercase tracking-widest text-foreground">{uploading ? 'Uploading...' : 'Drag & Drop or Tap to Upload'}</p>
-      <p className="text-[10px] text-stone-500 mt-2 uppercase tracking-tighter">Support for mobile gallery and camera</p>
+    <div className="space-y-4">
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => { e.preventDefault(); setDragging(false); if (e.dataTransfer.files) handleFiles(e.dataTransfer.files); }}
+        onClick={() => fileInputRef.current?.click()}
+        className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${dragging ? 'border-[#E65E19] bg-[#E65E19]/5' : 'border-border hover:border-[#E65E19]/50'}`}
+      >
+        <input type="file" multiple className="hidden" ref={fileInputRef} onChange={(e) => e.target.files && handleFiles(e.target.files)} accept="image/*" />
+        <Upload className={`w-10 h-10 mx-auto mb-4 ${uploading ? 'animate-bounce text-[#E65E19]' : 'text-stone-400'}`} />
+        <p className="text-sm font-bold uppercase tracking-widest text-foreground">{uploading ? 'Uploading...' : 'Drag & Drop or Tap to Upload'}</p>
+        <p className="text-[10px] text-stone-500 mt-2 uppercase tracking-tighter">Support for mobile gallery and camera</p>
+      </div>
+
+      {previews.length > 0 && (
+        <div className="grid grid-cols-4 gap-4 animate-pulse">
+          {previews.map((src, i) => (
+            <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-[#E65E19]/20 grayscale">
+              <img src={src} className="w-full h-full object-cover opacity-50" alt="Uploading preview" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                 <div className="w-6 h-6 border-2 border-[#E65E19] border-t-transparent rounded-full animate-spin" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -906,7 +933,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
   const [activeTab, setActiveTab] = useState<'dashboard' | 'listings' | 'media'>('dashboard');
   const [newProp, setNewProp] = useState<any>({
     title: '',
-    price: '',
+    price: '₹',
     location: '',
     type: 'Sale',
     beds: 3,
@@ -939,7 +966,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
       setShowAdd(false);
       setIsEditing(false);
       fetchListings();
-      setNewProp({ title: '', price: '', location: '', type: 'Sale', beds: 3, sqft: 2000, description: '', images: [], featured: false, coordinates: { lat: 28.6790, lng: 77.4453 } });
+      setNewProp({ title: '', price: '₹', location: '', type: 'Sale', beds: 3, sqft: 2000, description: '', images: [], featured: false, coordinates: { lat: 28.6790, lng: 77.4453 } });
     }
   };
 
@@ -950,7 +977,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
   };
 
   const openAdd = () => {
-    setNewProp({ title: '', price: '', location: '', type: 'Sale', beds: 3, sqft: 2000, description: '', images: [], featured: false, coordinates: { lat: 28.6790, lng: 77.4453 } });
+    setNewProp({ title: '', price: '₹', location: '', type: 'Sale', beds: 3, sqft: 2000, description: '', images: [], featured: false, coordinates: { lat: 28.6790, lng: 77.4453 } });
     setIsEditing(false);
     setShowAdd(true);
   };
@@ -1090,7 +1117,21 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                   </div>
                   <div>
                     <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Price</label>
-                    <input value={newProp.price} onChange={e => setNewProp({...newProp, price: e.target.value})} className="w-full border border-stone-200 p-4 rounded-xl focus:ring-2 focus:ring-[#E65E19]/20 outline-none" placeholder="₹1,200,000" required />
+                    <input 
+                      value={newProp.price} 
+                      onChange={e => {
+                        const val = e.target.value;
+                        // Ensure it always starts with ₹ and only allows numbers after it
+                        if (val === '' || val === '₹') {
+                          setNewProp({...newProp, price: '₹'});
+                        } else if (/^₹\d*$/.test(val)) {
+                          setNewProp({...newProp, price: val});
+                        }
+                      }} 
+                      className="w-full bg-background border border-border p-4 rounded-xl focus:ring-2 focus:ring-[#E65E19]/20 outline-none transition-all text-foreground" 
+                      placeholder="₹1,200,000" 
+                      required 
+                    />
                   </div>
                   <div>
                     <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Location Name</label>
@@ -1113,11 +1154,31 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     </div>
                     <div>
                       <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Beds</label>
-                      <input type="number" value={newProp.beds} onChange={e => setNewProp({...newProp, beds: parseInt(e.target.value)})} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" />
+                      <input 
+                        type="text" 
+                        value={newProp.beds} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          if (val === '' || /^\d+$/.test(val)) {
+                            setNewProp({...newProp, beds: val === '' ? '' : parseInt(val)});
+                          }
+                        }} 
+                        className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" 
+                      />
                     </div>
                     <div>
                       <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Sqft</label>
-                      <input type="number" value={newProp.sqft} onChange={e => setNewProp({...newProp, sqft: parseInt(e.target.value)})} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" />
+                      <input 
+                        type="text" 
+                        value={newProp.sqft} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          if (val === '' || /^\d+$/.test(val)) {
+                            setNewProp({...newProp, sqft: val === '' ? '' : parseInt(val)});
+                          }
+                        }} 
+                        className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" 
+                      />
                     </div>
                     <div className="flex flex-col justify-center">
                       <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Featured</label>
