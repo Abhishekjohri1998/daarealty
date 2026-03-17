@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import { createServer as createViteServer } from "vite";
 import { S3Client } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
+import cors from "cors";
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SERVER_VERSION = "1.0.1"; // Updated to verify server restart
+const SERVER_VERSION = "1.0.3"; // Updated with CORS and Content route fixes
 
 // Ensure uploads directory exists
 const UPLOADS_DIR = path.join(__dirname, "public", "uploads");
@@ -26,6 +27,7 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 }
 
 // --- Middleware & Headers ---
+app.use(cors()); // Enable CORS for cross-subdomain access
 app.use(express.json());
 app.use((req, res, next) => {
   res.setHeader("X-Daa-Server-Version", SERVER_VERSION);
@@ -36,6 +38,7 @@ app.use((req, res, next) => {
 // --- Models ---
 import { AdminUser } from "./models/AdminUser";
 import { Listing } from "./models/Listing";
+import { Content } from "./models/Content";
 // --- Models ---
 
 // --- Auth Middleware ---
@@ -124,6 +127,16 @@ app.post("/api/upload", authenticateAdmin, (req: any, res: any) => {
     console.log(`[DAA-API] Upload Success: ${urls.length} files`);
     res.json({ urls });
   });
+});
+
+// Content
+app.get("/api/content", async (req, res) => {
+  try {
+    const content = await Content.find();
+    res.json(content);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch content" });
+  }
 });
 
 // Listings
