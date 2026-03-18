@@ -35,6 +35,8 @@ app.use((req, res, next) => {
   next();
 });
 
+//import path from "path";
+import nodemailer from "nodemailer";
 // --- Models ---
 import { AdminUser } from "./models/AdminUser";
 import { Listing } from "./models/Listing";
@@ -58,15 +60,60 @@ const authenticateAdmin = (req: any, res: any, next: any) => {
 
 // --- API Routes (Prefix with /api) ---
 
+// --- Email Configuration ---
+const transporter = nodemailer.createTransport({
+  host: "smtp.office365.com",
+  port: 587,
+  secure: false, // TLS
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 // Contact & Inquiries
 app.post("/api/contact", async (req, res) => {
   try {
     const inquiry = new Inquiry(req.body);
     await inquiry.save();
     
-    // TODO: Implement Nodemailer sending here when App Password is provided
     // 1. Send confirmation to user
-    // 2. Send notification to daarealty@outlook.com
+    const userMailOptions = {
+      from: `"DAA Realty" <${process.env.EMAIL_USER}>`,
+      to: inquiry.email,
+      subject: "Thank you for your inquiry - DAA Realty",
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+          <h2 style="color: #E65E19;">Hello ${inquiry.firstName},</h2>
+          <p>Thank you for reaching out to **DAA Realty**. We have received your inquiry regarding <strong>${inquiry.interest}</strong>.</p>
+          <p>Our team will review your message and get back to you shortly.</p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="font-size: 12px; color: #666;">This is an automated response. Please do not reply directly to this email.</p>
+        </div>
+      `,
+    };
+
+    // 2. Send notification to admin
+    const adminMailOptions = {
+      from: `"DAA Web System" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
+      subject: `New Inquiry: ${inquiry.firstName} ${inquiry.lastName} - ${inquiry.interest}`,
+      html: `
+        <div style="font-family: sans-serif; padding: 20px;">
+          <h2>New Inquiry Received</h2>
+          <p><strong>Name:</strong> ${inquiry.firstName} ${inquiry.lastName}</p>
+          <p><strong>Email:</strong> ${inquiry.email}</p>
+          <p><strong>Phone:</strong> ${inquiry.phone}</p>
+          <p><strong>Interest:</strong> ${inquiry.interest}</p>
+          <p><strong>Message:</strong></p>
+          <blockquote style="background: #f9f9f9; padding: 15px; border-left: 5px solid #E65E19;">${inquiry.message}</blockquote>
+          <p><a href="https://admin.daarealty.in/admin/dashboard" style="background: #E65E19; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View in Admin Panel</a></p>
+        </div>
+      `,
+    };
+
+    transporter.sendMail(userMailOptions).catch(err => console.error("Error sending user email:", err));
+    transporter.sendMail(adminMailOptions).catch(err => console.error("Error sending admin notification:", err));
     
     res.json({ message: "Inquiry received successfully" });
   } catch (err) {
@@ -89,7 +136,23 @@ app.post("/api/newsletter", async (req, res) => {
     const newsletter = new Newsletter(req.body);
     await newsletter.save();
     
-    // TODO: Implement Nodemailer confirmation here
+    const welcomeMailOptions = {
+      from: `"DAA Realty" <${process.env.EMAIL_USER}>`,
+      to: newsletter.email,
+      subject: "Welcome to DAA Realty Updates",
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px; text-align: center;">
+          <h2 style="color: #E65E19;">You're on the list!</h2>
+          <p>Thank you for signing up for updates from **DAA Realty**.</p>
+          <p>We'll keep you informed about our latest luxury developments, investment opportunities, and market insights.</p>
+          <div style="margin-top: 30px;">
+            <a href="https://daarealty.in" style="background: #E65E19; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Visit our Website</a>
+          </div>
+        </div>
+      `,
+    };
+
+    transporter.sendMail(welcomeMailOptions).catch(err => console.error("Error sending newsletter email:", err));
     
     res.json({ message: "Signed up successfully" });
   } catch (err) {
