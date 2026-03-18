@@ -1542,7 +1542,7 @@ const MapComponent = ({ theme }: { theme: 'light' | 'dark' }) => {
       const L = window.L;
       if (!L) return;
 
-      const coords: [number, number] = [28.6790, 77.4453];
+      const coords: [number, number] = [28.673510, 77.443491];
 
       mapInstance.current = L.map(mapRef.current, {
         center: coords,
