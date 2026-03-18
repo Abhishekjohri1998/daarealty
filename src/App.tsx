@@ -170,7 +170,7 @@ const Navbar = ({ theme, toggleTheme }: { theme: 'light' | 'dark', toggleTheme: 
               <div className="mt-auto pb-12 opacity-50 space-y-2">
                 <p className="text-[10px] tracking-[0.2em] font-bold uppercase">Get In Touch</p>
                 <p className="text-sm font-serif">daarealty@outlook.com</p>
-                <p className="text-sm">+91 9560752744</p>
+                <p className="text-sm">9560752744 / 7011792465</p>
               </div>
             </div>
           </motion.div>
@@ -198,8 +198,11 @@ const Footer = () => {
                 <span className="text-[8px] tracking-[0.2em] font-bold uppercase">REALTY</span>
               </div>
             </Link>
-            <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed max-w-xs">
-              Leading the way in premium residential and commercial real estate through innovation and unwavering trust.
+            <p className="text-stone-500 dark:text-stone-400 text-[10px] tracking-[0.3em] font-bold uppercase mb-4">
+              Dreams • Aspirations • Achievements
+            </p>
+            <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed max-w-xs italic">
+              Building Value. Creating Spaces. Delivering Trust.
             </p>
           </div>
 
@@ -223,15 +226,34 @@ const Footer = () => {
 
           <div>
             <h4 className="text-[10px] tracking-[0.2em] font-bold text-stone-400 mb-8 uppercase">Connect</h4>
-            <div className="flex gap-4 mb-8">
+            <div className="flex gap-4 mb-10">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Facebook className="w-4 h-4"/></a>
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Instagram className="w-4 h-4"/></a>
-              <a href="https://wa.me/919910732010" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border">
+              <a href="https://wa.me/919560752744" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
               </a>
             </div>
+
+            <div className="space-y-4 mb-8">
+              <div className="flex gap-3 items-start">
+                <MapPin className="w-4 h-4 text-[#E65E19] shrink-0 mt-0.5" />
+                <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed">
+                  B-29, 4th floor, RDC, Rajnagar, <br/>
+                  Ghaziabad Pincode-201002
+                </p>
+              </div>
+              <div className="flex gap-3 items-center">
+                <Phone className="w-4 h-4 text-[#E65E19] shrink-0" />
+                <p className="text-stone-500 dark:text-stone-400 text-[11px] font-bold tracking-tighter">9560752744 , 7011792465</p>
+              </div>
+              <div className="flex gap-3 items-center">
+                <Mail className="w-4 h-4 text-[#E65E19] shrink-0" />
+                <p className="text-stone-500 dark:text-stone-400 text-[11px]">daarealty@outlook.com</p>
+              </div>
+            </div>
+
             <p className="text-stone-500 dark:text-stone-400 text-xs mb-4">Sign up for updates</p>
             <NewsletterSignup />
           </div>
@@ -338,7 +360,7 @@ const HomePage = () => {
             viewport={{ once: true }}
             className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-8 opacity-80"
           >
-            Building Value • Creating Spaces • Delivering Trust
+            Building Value. Creating Spaces. Delivering Trust.
           </motion.p>
           
           <motion.h1 
@@ -400,9 +422,9 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Dreams", icon: <Star className="w-6 h-6 text-[#E65E19]"/>, desc: "We believe in your most ambitious visions, transforming intangibles into reality. Our design philosophy starts with listening to your story and the lifestyle you imagine." },
-              { title: "Aspirations", icon: <TrendingUp className="w-6 h-6 text-[#E65E19]"/>, desc: "We are highlighting standards through innovation. We strive for excellence in every brick, ensuring our spaces inspire growth and forward momentum." },
-              { title: "Achievements", icon: <CheckCircle2 className="w-6 h-6 text-[#E65E19]"/>, desc: "Delivering lasting trust through proven results. Our portfolio of successfully completed projects stands as a testament to our commitment to quality." }
+              { title: "Dreams", icon: <Star className="w-6 h-6 text-[#E65E19]"/>, desc: "Understanding the aspirations of people and businesses." },
+              { title: "Aspirations", icon: <TrendingUp className="w-6 h-6 text-[#E65E19]"/>, desc: "Transforming ideas into real spaces and opportunities." },
+              { title: "Achievements", icon: <CheckCircle2 className="w-6 h-6 text-[#E65E19]"/>, desc: "Delivering projects and investments that stand the test of time." }
             ].map((pillar, idx) => (
               <motion.div 
                 key={pillar.title}
@@ -427,7 +449,7 @@ const HomePage = () => {
         <div className="flex justify-between items-end mb-16">
           <div className="space-y-4 text-foreground">
             <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] uppercase">Exclusive Portfolio</h4>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">Featured <br className="hidden md:block"/> Properties</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">Our <br className="hidden md:block"/> Work</h2>
           </div>
           <Link to="/services" className="text-stone-400 hover:text-[#E65E19] text-xs font-bold uppercase tracking-widest transition-all mb-2 flex items-center gap-2">View All <ArrowRight className="w-4 h-4"/></Link>
         </div>
@@ -501,8 +523,10 @@ const HomePage = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                >
-                 <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-6 uppercase">The Modern Oasis</h4>
-                 <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">Sophisticated <br/>Living, Redefined.</h2>
+                 <p className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg italic">
+                  Dreams • Aspirations • Achievements
+                 </p>
+                 <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">Responsible <br/>Growth.</h2>
                </motion.div>
                
                <motion.p 
@@ -511,7 +535,7 @@ const HomePage = () => {
                 viewport={{ once: true }}
                 className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg"
                >
-                 At DAA Realty, we don't just build structures; we curate environments that foster well-being and success. Our "Modern Oasis" approach integrates natural elements with cutting-edge architecture.
+                 Welcome to DAA Realty, a company driven by a long-term vision of creating sustainable value through real estate investments, infrastructure development and property solutions.
                </motion.p>
 
                <motion.ul 
@@ -523,7 +547,7 @@ const HomePage = () => {
                 }}
                 className="space-y-4"
                >
-                 {["Sustainable architectural practices", "Premium finishes and natural textures", "Intelligent space optimization"].map(item => (
+                 {["Real Estate Investments", "Infrastructure Development", "Property Solutions"].map(item => (
                    <motion.li 
                     variants={{
                       hidden: { opacity: 0, x: -10 },
@@ -583,46 +607,38 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           className="text-4xl md:text-7xl font-serif font-bold leading-tight mb-8"
         >
-          Building Legacies through <br/>
-          <span className="text-[#E65E19]">Integrity</span> and Strategic Vision.
+          Building Value. <br/>
+          <span className="text-[#E65E19]">Creating Spaces.</span> Delivering Trust.
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-stone-500 max-w-2xl mx-auto text-lg leading-relaxed mb-12"
+          className="text-stone-500 max-w-3xl mx-auto text-lg leading-relaxed mb-12"
         >
-          At DAA Realty, we blend decades of experience with a forward-thinking commitment to sustainable community development.
+          DAA Realty is a diversified real estate and infrastructure enterprise engaged in property investments, government contracts and leasing solutions across residential and commercial sectors.
         </motion.p>
         <div className="w-24 h-1.5 bg-[#E65E19] mx-auto rounded-full" />
       </section>
 
-      {/* Who We Are */}
+      {/* About Us Detail */}
       <section className="py-24 container mx-auto px-6">
         <div className="flex flex-col lg:flex-row items-center gap-20">
           <div className="lg:w-1/2 space-y-12">
             <div>
               <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">The Foundation</h4>
-              <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">Who We Are</h2>
+              <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">About Us</h2>
             </div>
             
             <p className="text-stone-500 text-lg leading-relaxed">
-              DAA Realty stands as a cornerstone in the real estate industry, built upon a rich history of experience and an unwavering commitment to integrity. We don't just build structures; we cultivate environments where businesses and communities thrive.
+              The company is built on a foundation of experience, integrity and strategic vision. Our activities range from participating in public infrastructure projects to developing and managing real estate assets for long-term value creation.
             </p>
             <p className="text-stone-500 text-lg leading-relaxed">
-              Our team brings together decades of market intelligence and a refined strategic vision that allows us to navigate complex landscapes with precision. Every project we undertake is a testament to our belief that real estate should deliver lasting, sustainable value.
+              We believe real estate is not just about buildings—it is about creating spaces where people live, work, and grow.
             </p>
-
-            <div className="flex gap-16 pt-8">
-              <div>
-                <h3 className="text-4xl font-serif font-bold text-[#E65E19] mb-2 uppercase">25+</h3>
-                <p className="text-[10px] tracking-[0.2em] font-bold text-stone-400 uppercase">Years Experience</p>
-              </div>
-              <div>
-                <h3 className="text-4xl font-serif font-bold text-[#E65E19] mb-2 uppercase">500+</h3>
-                <p className="text-[10px] tracking-[0.2em] font-bold text-stone-400 uppercase">Completed Projects</p>
-              </div>
-            </div>
+            <p className="text-stone-500 text-lg leading-relaxed">
+              Through disciplined investments and responsible development, DAA Realty aims to build a portfolio of assets that contribute to economic growth and community development.
+            </p>
           </div>
 
           <div className="lg:w-1/2 relative group">
@@ -638,6 +654,46 @@ const AboutPage = () => {
         </div>
       </section>
 
+      {/* Who We Are */}
+      <section className="py-24 bg-surface/50">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl">
+            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-6 uppercase">Our Expertise</h4>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase mb-12">Who We Are</h2>
+            
+            <p className="text-stone-500 text-lg leading-relaxed mb-12 italic">
+              DAA Realty represents a commitment to excellence in real estate and infrastructure development.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {[
+                { title: "Government Contracts", desc: "Participation in infrastructure and public works through government tenders." },
+                { title: "Real Estate Investments", desc: "Strategic acquisition and development of land and property assets." },
+                { title: "Residential Leasing", desc: "Providing quality rental spaces for families and individuals." },
+                { title: "Commercial Leasing", desc: "Offering spaces suited for offices, retail businesses and emerging enterprises." }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-6 items-start">
+                  <div className="w-10 h-10 bg-[#E65E19] text-white flex items-center justify-center rounded-lg font-bold shrink-0 shadow-lg">•</div>
+                  <div>
+                    <h3 className="text-xl font-bold uppercase tracking-tight mb-2">{item.title}</h3>
+                    <p className="text-stone-500 text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-16 space-y-6">
+              <p className="text-stone-500 text-lg leading-relaxed">
+                Our strength lies in combining construction expertise with real estate insight, enabling us to identify opportunities and execute projects efficiently.
+              </p>
+              <p className="text-stone-500 text-lg leading-relaxed">
+                At DAA Realty, every project reflects our commitment to quality, transparency and long-term value creation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Vision & Mission Cards */}
       <section className="py-24 bg-surface/30">
         <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -645,12 +701,12 @@ const AboutPage = () => {
             { 
               title: "Our Vision", 
               icon: <Star className="w-8 h-8 text-[#E65E19]"/>, 
-              desc: "To redefine the landscape of urban living by pioneering developments that harmonize modern luxury with environmental responsibility. We envision communities where every square foot serves a purpose and enhances the quality of life for generations to come." 
+              desc: "To become a trusted and respected real estate enterprise known for responsible investments, quality infrastructure development and sustainable asset creation. We aim to build a portfolio that not only generates value but also contributes positively to communities and urban development." 
             },
             { 
               title: "Our Mission", 
               icon: <TrendingUp className="w-8 h-8 text-[#E65E19]"/>, 
-              desc: "Our mission is to create sustainable real estate value through disciplined investment, transparent management, and community-centric design. We commit to excellence in every detail, ensuring that our projects leave a positive and lasting imprint on the world." 
+              desc: "Our mission is guided by the principles represented by DAA – Dreams, Aspirations, Achievements." 
             }
           ].map((card, idx) => (
             <motion.div 
@@ -663,6 +719,18 @@ const AboutPage = () => {
               <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center">{card.icon}</div>
               <h3 className="text-3xl font-serif font-bold leading-tight uppercase">{card.title}</h3>
               <p className="text-stone-500 leading-relaxed">{card.desc}</p>
+              {card.title === "Our Mission" && (
+                <ul className="space-y-3">
+                  {[
+                    "To create reliable real estate assets through strategic investments.",
+                    "To participate in infrastructure development through government projects with integrity and professionalism.",
+                    "To provide quality residential and commercial spaces for modern living and business needs.",
+                    "To build long-term relationships based on trust, transparency and consistent delivery."
+                  ].map(m => (
+                    <li key={m} className="flex gap-2 text-sm text-stone-500"><span className="text-[#E65E19]">•</span> {m}</li>
+                  ))}
+                </ul>
+              )}
             </motion.div>
           ))}
         </div>
@@ -710,7 +778,9 @@ const PhilosophyPage = () => {
         </div>
         <div className="container mx-auto px-6 relative z-20 text-center">
           <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[#E65E19] text-[10px] tracking-[0.4em] font-bold uppercase mb-6">Our Foundation</motion.h4>
-          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} className="text-4xl md:text-7xl font-serif font-bold mb-8 uppercase tracking-widest leading-tight">A Legacy <br className="md:hidden" /> of Values</motion.h1>
+          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} className="text-4xl md:text-7xl font-serif font-bold mb-8 uppercase tracking-tight leading-tight">
+            Dreams <br/> Aspirations <br/> <span className="text-[#E65E19]">Achievements</span>
+          </motion.h1>
           <div className="w-24 h-1 bg-[#E65E19] mx-auto rounded-full" />
         </div>
       </section>
@@ -722,17 +792,17 @@ const PhilosophyPage = () => {
             { 
               title: "Dreams", 
               num: "01",
-              text: "Every project begins as a whisper of a dream. We specialize in the architecture of expectations, where the intangible becomes a structure you can touch. Our philosophy is that a home is not just a place, but the physical manifestation of your highest aspirations."
+              text: "Understanding the aspirations of people and businesses. We listen to the quietest whispers of ambition to build the loudest statements of success."
             },
             { 
               title: "Aspirations", 
               num: "02",
-              text: "We aspire to go beyond the conventional. For us, innovation is not just about technology, but about the evolution of living. We push the boundaries of design to create spaces that don't just house life, but enhance the way life is lived."
+              text: "Transforming ideas into real spaces and opportunities. We bridge the gap between imagination and infrastructure with precision and care."
             },
             { 
               title: "Achievements", 
               num: "03",
-              text: "Success is measured in the trust of our clients and the longevity of our constructions. Our achievements are the landmarks we've built and the families that have found their sanctuary within them. We build for the future, ensuring value for decades."
+              text: "Delivering projects and investments that stand the test of time. Our landmarks are the evidence of our commitment to quality and longevity."
             }
           ].map((item, idx) => (
             <motion.div 
@@ -1678,14 +1748,13 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
           <div className="lg:w-2/5 space-y-12">
             <h2 className="text-2xl font-serif font-bold uppercase tracking-widest">Get In Touch</h2>
 
-            <div className="space-y-8">
               <div className="flex gap-6 items-start">
                 <div className="w-12 h-12 bg-surface rounded-xl flex items-center justify-center shrink-0 border border-border">
                   <MapPin className="w-5 h-5 text-[#E65E19]" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm mb-1 uppercase tracking-widest">Our Office</h4>
-                  <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed">B-29, 4th floor, RDC,<br/>Rajnagar, Ghaziabad</p>
+                  <h4 className="font-bold text-sm mb-1 uppercase tracking-widest">Registered Office</h4>
+                  <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed">B-29, 4th floor, RDC,<br/>Rajnagar, Ghaziabad Pincode-201002</p>
                 </div>
               </div>
 
@@ -1694,8 +1763,8 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
                   <Phone className="w-5 h-5 text-[#E65E19]" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm mb-1 uppercase tracking-widest">Phone Number</h4>
-                  <p className="text-stone-500 dark:text-stone-400 text-sm">+91 9560752744</p>
+                  <h4 className="font-bold text-sm mb-1 uppercase tracking-widest">Phone</h4>
+                  <p className="text-stone-500 dark:text-stone-400 text-sm">9560752744 , 7011792465</p>
                 </div>
               </div>
 
@@ -1704,11 +1773,17 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
                   <Mail className="w-5 h-5 text-[#E65E19]" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm mb-1 uppercase tracking-widest">Email Address</h4>
+                  <h4 className="font-bold text-sm mb-1 uppercase tracking-widest">Email</h4>
                   <p className="text-stone-500 dark:text-stone-400 text-sm">daarealty@outlook.com</p>
                 </div>
               </div>
-            </div>
+
+              <div className="pt-8 border-t border-border">
+                <h4 className="font-bold text-sm mb-4 uppercase tracking-widest text-[#E65E19]">Business Inquiries</h4>
+                <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed italic">
+                  For partnerships, leasing opportunities, or project discussions, please contact us and our team will respond promptly.
+                </p>
+              </div>
 
             {/* Proper Interactable Map View */}
             <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-border/50 border border-border h-[450px] relative group z-0">
