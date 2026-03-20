@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { AdminUser } from './models/AdminUser';
 import { Listing } from './models/Listing';
 import { Content } from './models/Content';
+import TeamMember from './models/TeamMember';
 
 dotenv.config();
 
@@ -83,6 +84,29 @@ const seed = async () => {
       { value: 'Discover Your Modern Oasis', section: 'hero' },
       { upsert: true }
     );
+    await Content.findOneAndUpdate(
+      { key: 'founder_image' },
+      { value: '/assets/executive_portrait.png', section: 'about' },
+      { upsert: true }
+    );
+
+    // Initial Team Members
+    await TeamMember.deleteMany({});
+    await TeamMember.create([
+      {
+        name: "Abhishek Johri",
+        role: "Managing Director",
+        image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80",
+        order: 1
+      },
+      {
+        name: "Sarah Jenkins",
+        role: "Head of Operations",
+        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
+        order: 2
+      }
+    ]);
+    console.log("Team members and founder image seeded");
 
     console.log("Seeding complete");
     process.exit(0);

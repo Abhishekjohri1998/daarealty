@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate,
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { 
   LayoutDashboard, 
-  Database, 
+  Database,
+  Users, 
   Plus, 
   Trash2, 
   LogOut, 
@@ -595,6 +596,18 @@ const HomePage = () => {
 // --- AboutPage Component ---
 
 const AboutPage = () => {
+  const [founderImage, setFounderImage] = useState<string>('/assets/executive_portrait.png');
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(getApiUrl('/api/content')).then(res => res.json()).then(data => {
+      const img = data.find((c: any) => c.key === 'founder_image');
+      if (img && img.value) setFounderImage(img.value);
+    }).catch(() => {});
+    
+    fetch(getApiUrl('/api/team')).then(res => res.json()).then(setTeamMembers).catch(() => {});
+  }, []);
+
   return (
     <div className="pt-20 bg-background min-h-screen text-foreground transition-colors duration-300">
       {/* Hero Section */}
@@ -643,7 +656,7 @@ const AboutPage = () => {
             <motion.img 
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              src="/assets/executive_portrait.png"
+              src={founderImage}
               className="rounded-[3rem] shadow-2xl relative z-10 w-full object-cover aspect-square grayscale-[20%] hover:grayscale-0 transition-all duration-700"
               alt="Executive Management"
             />
@@ -732,6 +745,41 @@ const AboutPage = () => {
           ))}
         </div>
       </section>
+
+      {/* Team Section */}
+      {teamMembers.length > 0 && (
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-6">
+            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase text-center">Leadership</h4>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight uppercase mb-16 text-center">Meet The Team</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
+              {teamMembers.map((member, idx) => (
+                <motion.div 
+                  key={member._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="group cursor-pointer"
+                >
+                  <div className="rounded-[2rem] overflow-hidden mb-6 aspect-[4/5] bg-surface relative shadow-xl border border-border">
+                    <img 
+                      src={member.image} 
+                      alt={member.name} 
+                      className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                    <div className="absolute bottom-6 left-6 right-6 text-white text-left">
+                      <h3 className="text-2xl font-serif font-bold uppercase tracking-tight leading-tight">{member.name}</h3>
+                      <p className="text-[#E65E19] text-xs font-bold tracking-widest uppercase mt-2 opacity-90">{member.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Core Principles */}
       <section className="py-32 bg-[#E65E19]">
@@ -1051,9 +1099,14 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
   const [listings, setListings] = useState<any[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'listings' | 'media' | 'inquiries' | 'newsletters'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'listings' | 'media' | 'inquiries' | 'newsletters' | 'team'>('dashboard');
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [newsletters, setNewsletters] = useState<any[]>([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [founderImage, setFounderImage] = useState<string>('');
+  const [showAddTeam, setShowAddTeam] = useState(false);
+  const [isEditingTeam, setIsEditingTeam] = useState(false);
+  const [newTeamMember, setNewTeamMember] = useState<any>({ name: '', role: '', image: '', order: 0 });
   const [newProp, setNewProp] = useState<any>({
     title: '',
     price: '₹',
@@ -1071,6 +1124,8 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
     fetchListings();
     fetchInquiries();
     fetchNewsletters();
+    fetchTeam();
+    fetchContent();
   }, []);
 
   const fetchListings = () => {
@@ -1087,6 +1142,28 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
     fetch(getApiUrl('/api/admin/newsletters'), {
       headers: { 'Authorization': `Bearer ${token}` }
     }).then(res => res.json()).then(setNewsletters).catch(() => {});
+  };
+
+  const fetchTeam = () => {
+    fetch(getApiUrl('/api/team')).then(res => res.json()).then(setTeamMembers).catch(() => {});
+  };
+
+  const fetchContent = () => {
+    fetch(getApiUrl('/api/content')).then(res => res.json()).then((data: any) => {
+      const img = data.find((c: any) => c.key === 'founder_image');
+      if (img) setFounderImage(img.value);
+    }).catch(() => {});
+  };
+
+  const updateFounderImage = async (url: string) => {
+    try {
+      await fetch(getApiUrl('/api/content/founder_image'), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ value: url })
+      });
+      setFounderImage(url);
+    } catch(err) { console.error('Failed to update founder image'); }
   };
 
   const addListing = async (e: React.FormEvent) => {
@@ -1123,6 +1200,43 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
     if (window.confirm("Delete this listing?")) {
       await fetch(`/api/listings/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       fetchListings();
+    }
+  };
+
+  const addTeamMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const url = isEditingTeam ? `/api/team/${newTeamMember._id}` : '/api/team';
+    const method = isEditingTeam ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(newTeamMember)
+    });
+    if (res.ok) {
+      setShowAddTeam(false);
+      setIsEditingTeam(false);
+      fetchTeam();
+      setNewTeamMember({ name: '', role: '', image: '', order: 0 });
+    }
+  };
+
+  const openEditTeam = (member: any) => {
+    setNewTeamMember({ ...member });
+    setIsEditingTeam(true);
+    setShowAddTeam(true);
+  };
+
+  const openAddTeam = () => {
+    setNewTeamMember({ name: '', role: '', image: '', order: 0 });
+    setIsEditingTeam(false);
+    setShowAddTeam(true);
+  };
+
+  const deleteTeamMember = async (id: string) => {
+    if (window.confirm("Delete this team member?")) {
+      await fetch(`/api/team/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+      fetchTeam();
     }
   };
 
@@ -1164,6 +1278,12 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
           >
             <Phone className="w-5 h-5"/> Newsletters
           </button>
+          <button
+            onClick={() => setActiveTab('team')}
+            className={`flex items-center gap-3 w-full p-4 rounded-xl transition-all font-bold ${activeTab === 'team' ? 'bg-[#E65E19] shadow-lg text-white' : 'text-stone-400 hover:text-white'}`}
+          >
+            <Users className="w-5 h-5"/> Team
+          </button>
         </nav>
         <button onClick={logout} className="flex items-center gap-3 w-full p-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all font-bold uppercase"><LogOut className="w-5 h-5"/> Logout</button>
       </aside>
@@ -1180,10 +1300,10 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
           <header className="flex justify-between items-center mb-12">
           <div className="text-foreground">
             <h1 className="text-3xl font-serif font-bold uppercase tracking-tight">
-              {activeTab === 'dashboard' ? 'Overview' : activeTab === 'listings' ? 'Listing Management' : activeTab === 'media' ? 'Media Library' : activeTab === 'inquiries' ? 'Inquiries' : 'Newsletter Subscribers'}
+              {activeTab === 'dashboard' ? 'Overview' : activeTab === 'listings' ? 'Listing Management' : activeTab === 'media' ? 'Media Library' : activeTab === 'inquiries' ? 'Inquiries' : activeTab === 'team' ? 'Team Management' : 'Newsletter Subscribers'}
             </h1>
             <p className="text-stone-500 dark:text-stone-400">
-              {activeTab === 'dashboard' ? 'Welcome to your DAA Realty dashboard' : activeTab === 'listings' ? 'Managing properties on daarealty.in' : activeTab === 'media' ? 'All property images and assets' : activeTab === 'inquiries' ? 'Active inquiries and leads' : 'List of users signed up for updates'}
+              {activeTab === 'dashboard' ? 'Welcome to your DAA Realty dashboard' : activeTab === 'listings' ? 'Managing properties on daarealty.in' : activeTab === 'media' ? 'All property images and assets' : activeTab === 'inquiries' ? 'Active inquiries and leads' : activeTab === 'team' ? 'Manage founder image and team members' : 'List of users signed up for updates'}
             </p>
           </div>
           <div className="flex gap-4">
@@ -1204,6 +1324,11 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                 document.body.removeChild(a);
               }} className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-green-700 active:scale-95 transition-all uppercase tracking-widest text-xs">
                 Export to Excel
+              </button>
+            )}
+            {activeTab === 'team' && (
+              <button onClick={openAddTeam} className="bg-[#E65E19] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-[#E65E19]/20 active:scale-95 transition-all uppercase tracking-widest text-xs">
+                <PlusIcon className="w-5 h-5"/> Add Member
               </button>
             )}
             {activeTab === 'listings' && (
@@ -1304,6 +1429,60 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
           </div>
         )}
 
+        {activeTab === 'team' && (
+          <div className="space-y-12">
+            <div className="bg-surface p-8 rounded-3xl border border-border">
+              <h2 className="text-xl font-bold uppercase mb-6 text-foreground">Founder / Executive Image</h2>
+              <div className="flex items-center gap-8">
+                <div className="w-32 h-32 rounded-2xl overflow-hidden bg-background border border-border shadow-inner">
+                  {founderImage ? <img src={founderImage} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-stone-400"><ImageIcon /></div>}
+                </div>
+                <div>
+                  <label className="bg-white border border-border px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs cursor-pointer hover:bg-stone-50 transition-colors text-stone-900 inline-block">
+                    Upload New Image
+                    <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                      if (!e.target.files?.length) return;
+                      const formData = new FormData();
+                      formData.append('images', e.target.files[0]);
+                      const res = await fetch(getApiUrl('/api/upload'), {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                      });
+                      if (res.ok) {
+                        const data = await res.json();
+                        if (data.urls?.length) updateFounderImage(data.urls[0]);
+                      }
+                    }}/>
+                  </label>
+                  <p className="text-stone-500 text-xs mt-4">This image is displayed prominently on the About Us page.</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-bold uppercase mb-6 text-foreground">Team Members</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {teamMembers.map((member, i) => (
+                  <div key={i} className="bg-surface p-6 rounded-2xl shadow-sm border border-border flex items-center gap-6">
+                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-background border border-border flex-shrink-0">
+                      <img src={member.image} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="font-bold text-lg uppercase tracking-tight text-foreground">{member.name}</h3>
+                      <p className="text-[#E65E19] text-sm font-bold tracking-widest uppercase">{member.role}</p>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                       <button onClick={() => openEditTeam(member)} className="p-3 bg-background text-stone-600 rounded-xl hover:bg-stone-100 border border-border flex justify-center"><EditIcon className="w-4 h-4" /></button>
+                       <button onClick={() => deleteTeamMember(member._id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl flex justify-center hover:bg-red-500/20"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'media' && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {listings.flatMap((l, idx) => (l.images || []).map((img: string, i: number) => (
@@ -1322,6 +1501,59 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
             )))}
           </div>
         )}
+
+        <AnimatePresence>
+          {showAddTeam && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/80 backdrop-blur-sm">
+              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-surface w-full max-w-lg rounded-3xl p-10 shadow-2xl border border-border">
+                <div className="flex justify-between items-center mb-8 text-foreground">
+                  <h2 className="text-2xl font-serif font-bold uppercase tracking-tight">{isEditingTeam ? 'Edit Team Member' : 'New Team Member'}</h2>
+                  <button onClick={() => { setShowAddTeam(false); setIsEditingTeam(false); }} className="text-stone-400 hover:text-[#E65E19] transition-colors"><X/></button>
+                </div>
+                <form onSubmit={addTeamMember} className="space-y-6 text-foreground">
+                  <div>
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Name</label>
+                    <input value={newTeamMember.name} onChange={e => setNewTeamMember({...newTeamMember, name: e.target.value})} className="w-full bg-background border border-border p-4 rounded-xl focus:ring-2 focus:ring-[#E65E19]/20 outline-none transition-all text-foreground" required />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Role</label>
+                    <input value={newTeamMember.role} onChange={e => setNewTeamMember({...newTeamMember, role: e.target.value})} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" required />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Image URL</label>
+                    <div className="flex gap-4">
+                      <input value={newTeamMember.image} onChange={e => setNewTeamMember({...newTeamMember, image: e.target.value})} className="flex-grow bg-background border border-border p-4 rounded-xl outline-none text-foreground" required />
+                      <label className="bg-white border border-border px-4 py-4 rounded-xl font-bold uppercase tracking-widest text-xs cursor-pointer hover:bg-stone-50 transition-colors flex items-center whitespace-nowrap text-stone-900">
+                        Upload
+                        <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                          if (!e.target.files?.length) return;
+                          const formData = new FormData();
+                          formData.append('images', e.target.files[0]);
+                          const res = await fetch(getApiUrl('/api/upload'), {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` },
+                            body: formData
+                          });
+                          if (res.ok) {
+                            const data = await res.json();
+                            if (data.urls?.length) setNewTeamMember({...newTeamMember, image: data.urls[0]});
+                          }
+                        }}/>
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Order (Sort)</label>
+                    <input type="number" value={newTeamMember.order} onChange={e => setNewTeamMember({...newTeamMember, order: parseInt(e.target.value) || 0})} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" />
+                  </div>
+                  <button type="submit" className="w-full bg-[#E65E19] text-white p-4 rounded-xl font-bold uppercase tracking-widest shadow-lg hover:shadow-[#E65E19]/20 active:scale-95 transition-all">
+                    {isEditingTeam ? 'Save Changes' : 'Add Member'}
+                  </button>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence>
           {showAdd && (

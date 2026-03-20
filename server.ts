@@ -43,6 +43,7 @@ import { Listing } from "./models/Listing";
 import { Content } from "./models/Content";
 import { Inquiry } from "./models/Inquiry";
 import { Newsletter } from "./models/Newsletter";
+import TeamMember from "./models/TeamMember";
 // --- Models ---
 
 // --- Auth Middleware ---
@@ -254,6 +255,19 @@ app.get("/api/content", async (req, res) => {
   }
 });
 
+app.put("/api/content/:key", authenticateAdmin, async (req, res) => {
+  try {
+    const updated = await Content.findOneAndUpdate(
+      { key: req.params.key },
+      { value: req.body.value },
+      { new: true, upsert: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update content" });
+  }
+});
+
 // Listings
 app.get("/api/listings", async (req, res) => {
   try {
@@ -289,6 +303,44 @@ app.delete("/api/listings/:id", authenticateAdmin, async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete listing" });
+  }
+});
+
+// Team Members
+app.get("/api/team", async (req, res) => {
+  try {
+    const team = await TeamMember.find().sort({ order: 1, createdAt: 1 });
+    res.json(team);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch team" });
+  }
+});
+
+app.post("/api/team", authenticateAdmin, async (req, res) => {
+  try {
+    const member = new TeamMember(req.body);
+    await member.save();
+    res.json(member);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create team member" });
+  }
+});
+
+app.put("/api/team/:id", authenticateAdmin, async (req, res) => {
+  try {
+    const member = await TeamMember.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(member);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update team member" });
+  }
+});
+
+app.delete("/api/team/:id", authenticateAdmin, async (req, res) => {
+  try {
+    await TeamMember.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete team member" });
   }
 });
 
