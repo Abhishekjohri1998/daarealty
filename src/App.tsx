@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { 
   LayoutDashboard, 
@@ -104,16 +104,18 @@ const Navbar = ({ theme, toggleTheme }: { theme: 'light' | 'dark', toggleTheme: 
           
           <div className="hidden md:flex items-center gap-10">
             <Link to="/" className={`text-xs font-bold tracking-widest hover:text-[#E65E19] transition-colors uppercase ${pathname === '/' ? 'text-[#E65E19]' : ''}`}>Home</Link>
-            <Link to="/services" className={`text-xs font-bold tracking-widest hover:text-[#E65E19] transition-colors uppercase ${pathname === '/services' ? 'text-[#E65E19]' : ''}`}>Properties</Link>
+            <Link to="/services" className={`text-xs font-bold tracking-widest hover:text-[#E65E19] transition-colors uppercase ${pathname === '/services' ? 'text-[#E65E19]' : ''}`}>Services</Link>
             <Link to="/about" className={`text-xs font-bold tracking-widest hover:text-[#E65E19] transition-colors uppercase ${pathname === '/about' ? 'text-[#E65E19]' : ''}`}>About Us</Link>
             <Link to="/contact" className={`text-xs font-bold tracking-widest hover:text-[#E65E19] transition-colors uppercase ${pathname === '/contact' ? 'text-[#E65E19]' : ''}`}>Contact Us</Link>
           </div>
 
           <div className="flex items-center gap-4">
             <ThemeToggle theme={theme} toggle={toggleTheme} />
-            <Link to="/admin" className="hidden sm:block bg-[#E65E19] text-white px-8 py-3 rounded-md text-xs font-bold tracking-widest hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-lg shadow-[#E65E19]/20 uppercase">
-              List Property
-            </Link>
+            {localStorage.getItem('daa_admin_token') && (
+              <Link to="/admin" className="hidden sm:block bg-[#E65E19] text-white px-8 py-3 rounded-md text-xs font-bold tracking-widest hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-lg shadow-[#E65E19]/20 uppercase">
+                List Project
+              </Link>
+            )}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden w-10 h-10 flex items-center justify-center text-foreground relative z-50"
@@ -162,9 +164,11 @@ const Navbar = ({ theme, toggleTheme }: { theme: 'light' | 'dark', toggleTheme: 
                 transition={{ delay: 0.6 }}
                 className="mt-12"
               >
-                <Link to="/admin" className="inline-block bg-[#E65E19] text-white px-10 py-5 rounded-xl font-bold tracking-widest text-xs uppercase shadow-2xl shadow-[#E65E19]/30">
-                  List Your Property
-                </Link>
+                {localStorage.getItem('daa_admin_token') && (
+                  <Link to="/admin" className="inline-block bg-[#E65E19] text-white px-10 py-5 rounded-xl font-bold tracking-widest text-xs uppercase shadow-2xl shadow-[#E65E19]/30">
+                    List Your Project
+                  </Link>
+                )}
               </motion.div>
 
               <div className="mt-auto pb-12 opacity-50 space-y-2">
@@ -360,7 +364,7 @@ const HomePage = () => {
             viewport={{ once: true }}
             className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-8 opacity-80"
           >
-            Building Value. Creating Spaces. Delivering Trust.
+            Dreams • Aspirations • Achievements
           </motion.p>
           
           <motion.h1 
@@ -370,9 +374,9 @@ const HomePage = () => {
             viewport={{ once: true }}
             className="text-5xl md:text-8xl font-serif font-bold mb-12 leading-tight flex flex-col items-center"
           >
-            <span className="flex items-center gap-2 uppercase">Dreams <span className="w-2 h-2 md:w-3 md:h-3 bg-[#E65E19] rounded-full translate-y-1 md:translate-y-2" /></span>
-            <span className="flex items-center gap-2 uppercase">Aspirations <span className="w-2 h-2 md:w-3 md:h-3 bg-[#E65E19] rounded-full translate-y-1 md:translate-y-2" /></span>
-            <span className="flex items-center gap-2 uppercase">Achievements <span className="w-2 h-2 md:w-3 md:h-3 bg-[#E65E19] rounded-full translate-y-1 md:translate-y-2" /></span>
+            <span>Building Value.</span>
+            <span>Creating Spaces.</span>
+            <span className="text-[#E65E19]">Delivering Trust.</span>
           </motion.h1>
           
           <motion.div 
@@ -383,7 +387,7 @@ const HomePage = () => {
             className="flex flex-col md:flex-row gap-6 justify-center"
           >
             <Link to="/services" className="bg-[#E65E19] text-white px-10 py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase flex items-center justify-center">
-              View Projects
+              Our Services
             </Link>
             <Link to="/philosophy" className="bg-white/10 backdrop-blur-md border border-white/20 px-10 py-5 rounded-md text-xs font-bold tracking-widest uppercase hover:bg-white/20 transition-all text-white flex items-center justify-center">
               Our Philosophy
@@ -441,6 +445,16 @@ const HomePage = () => {
               </motion.div>
             ))}
           </div>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="mt-16 text-center max-w-4xl mx-auto"
+          >
+            <p className="text-stone-500 dark:text-stone-400 text-lg md:text-xl font-serif italic leading-relaxed">
+              "From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -449,49 +463,46 @@ const HomePage = () => {
         <div className="flex justify-between items-end mb-16">
           <div className="space-y-4 text-foreground">
             <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] uppercase">Exclusive Portfolio</h4>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">Our <br className="hidden md:block"/> Work</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">Our Existing <br className="hidden md:block"/> Projects</h2>
           </div>
           <Link to="/services" className="text-stone-400 hover:text-[#E65E19] text-xs font-bold uppercase tracking-widest transition-all mb-2 flex items-center gap-2">View All <ArrowRight className="w-4 h-4"/></Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="flex gap-10 overflow-x-auto pb-10 snap-x hide-scrollbar">
           {listings.map((prop, idx) => (
-            <motion.div 
+            <Link 
+              to={`/project/${prop._id}`} 
               key={prop._id || idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              viewport={{ once: true }}
-              className="group bg-surface rounded-[2.5rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all"
+              className="group bg-surface rounded-[2.5rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[320px] md:min-w-[400px] snap-start"
             >
               <div className="aspect-[4/3] relative overflow-hidden">
                 <img 
-                  src={prop.images?.[0] || '/assets/placeholder.png'} 
+                  src={getImageUrl(prop.images?.[0])} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                   alt={prop.title}
                 />
                 <div className="absolute top-6 left-6 flex gap-2">
                   <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-xl">
-                    {prop.type || 'For Sale'}
+                    {prop.type || 'Sell'}
                   </span>
                 </div>
               </div>
               <div className="p-10 space-y-6 text-foreground">
                 <div>
-                  <h3 className="text-xl font-bold uppercase tracking-tight mb-2 group-hover:text-[#E65E19] transition-colors">{prop.title}</h3>
-                  <p className="text-stone-500 dark:text-stone-400 text-sm flex items-center gap-2">
+                  <h3 className="text-xl font-bold uppercase tracking-tight mb-2 group-hover:text-[#E65E19] transition-colors truncate">{prop.title}</h3>
+                  <p className="text-stone-500 dark:text-stone-400 text-sm flex items-center gap-2 truncate">
                     <MapPin className="w-3 h-3 text-[#E65E19]" /> {prop.location}
                   </p>
                 </div>
                 
                 <div className="flex justify-between items-center pt-6 border-t border-border">
-                  <span className="text-2xl font-serif font-bold text-[#E65E19]">{prop.price}</span>
-                  <Link to="/contact" className="w-10 h-10 bg-surface border border-border rounded-full flex items-center justify-center text-stone-400 hover:bg-[#E65E19] hover:text-white transition-all shadow-xl">
+                  <span className="text-2xl font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
+                  <div className="w-10 h-10 bg-surface border border-border rounded-full flex items-center justify-center text-stone-400 group-hover:bg-[#E65E19] group-hover:text-white transition-all shadow-xl">
                     <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </Link>
           ))}
           {listings.length === 0 && (
             <div className="col-span-3 py-20 text-center border-2 border-dashed border-border rounded-[2.5rem] opacity-50">
@@ -501,7 +512,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Modern Oasis Section */}
+      {/* Intro Section */}
       <section className="py-32 overflow-hidden bg-background text-foreground">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-20 items-center">
@@ -523,11 +534,20 @@ const HomePage = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                >
-                 <p className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg italic">
-                  Dreams • Aspirations • Achievements
+                 <p className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg italic uppercase tracking-widest mb-4">
+                  Welcome
                  </p>
-                 <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">Responsible <br/>Growth.</h2>
+                 <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">DAA <br/>Realty</h2>
                </motion.div>
+               
+               <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="text-stone-500 dark:text-stone-400 leading-relaxed text-xl mb-6"
+               >
+                 Welcome to DAA Realty, a company driven by a long-term vision of creating sustainable value through real estate investments, infrastructure development and property solutions.
+               </motion.p>
                
                <motion.p 
                 initial={{ opacity: 0 }}
@@ -535,34 +555,11 @@ const HomePage = () => {
                 viewport={{ once: true }}
                 className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg"
                >
-                 Welcome to DAA Realty, a company driven by a long-term vision of creating sustainable value through real estate investments, infrastructure development and property solutions.
+                 With a strong presence in real estate investments and property leasing, DAA Realty focuses on building assets that generate lasting value for communities, investors and businesses.
                </motion.p>
 
-               <motion.ul 
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={{
-                  visible: { transition: { staggerChildren: 0.1 } }
-                }}
-                className="space-y-4"
-               >
-                 {["Real Estate Investments", "Infrastructure Development", "Property Solutions"].map(item => (
-                   <motion.li 
-                    variants={{
-                      hidden: { opacity: 0, x: -10 },
-                      visible: { opacity: 1, x: 0 }
-                    }}
-                    key={item} 
-                    className="flex items-center gap-4 text-stone-700 dark:text-stone-300 font-medium italic"
-                   >
-                     <span className="w-2 h-2 bg-[#E65E19] rounded-full" /> {item}
-                   </motion.li>
-                 ))}
-               </motion.ul>
-
                <Link to="/about" className="inline-flex items-center gap-4 text-[#E65E19] font-bold tracking-[0.2em] text-xs uppercase group">
-                 Explore Our Design Philosophy <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2"/>
+                 Discover Who We Are <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2"/>
                </Link>
             </div>
           </div>
@@ -821,7 +818,7 @@ const PhilosophyPage = () => {
         </div>
       </section>
 
-      {/* Modern Oasis detailed section */}
+      {/* Vision Statement */}
       <section className="py-32 bg-surface/50 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#E65E19]/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
         <div className="container mx-auto px-6 max-w-4xl text-center relative z-10">
@@ -830,11 +827,11 @@ const PhilosophyPage = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             className="text-3xl md:text-5xl font-serif font-bold mb-16 uppercase tracking-widest leading-tight"
           >
-            The Modern Oasis <br/><span className="text-[#E65E19]">Living Philosophy</span>
+            Our <br/><span className="text-[#E65E19]">Vision</span>
           </motion.h2>
-          <div className="space-y-12 text-stone-600 dark:text-stone-300 text-lg leading-relaxed text-left md:text-center italic">
-            <p>Our "Modern Oasis" design language is a response to the rapid urbanization of our times. We believe that as our cities grow taller and faster, our need for tranquility and connection to nature becomes increasingly vital.</p>
-            <p>At DAA Realty, every development integrates the elements of light, air, and greenery. We don't see these as luxuries, but as fundamental rights of the modern dweller. Our architecture seeks to blur the lines between the interior sanctuary and the natural world outside.</p>
+          <div className="space-y-8 text-stone-600 dark:text-stone-300 text-lg leading-relaxed text-left md:text-center italic">
+            <p>To become a trusted and respected real estate enterprise known for responsible investments, quality infrastructure development and sustainable asset creation.</p>
+            <p>We aim to build a portfolio that not only generates value but also contributes positively to communities and urban development.</p>
           </div>
           <div className="mt-20 flex justify-center">
             <Link to="/contact" className="bg-[#E65E19] text-white px-12 py-5 rounded-xl font-bold tracking-widest text-xs uppercase shadow-2xl shadow-[#E65E19]/20 hover:scale-105 transition-all">
@@ -1061,7 +1058,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
     title: '',
     price: '₹',
     location: '',
-    type: 'Sale',
+    type: 'Sell',
     beds: 3,
     sqft: 2000,
     description: '',
@@ -1106,7 +1103,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
       setShowAdd(false);
       setIsEditing(false);
       fetchListings();
-      setNewProp({ title: '', price: '₹', location: '', type: 'Sale', beds: 3, sqft: 2000, description: '', images: [], featured: false, coordinates: { lat: 28.6790, lng: 77.4453 } });
+      setNewProp({ title: '', price: '₹', location: '', type: 'Sell', beds: 3, sqft: 2000, description: '', images: [], featured: false, coordinates: { lat: 28.6790, lng: 77.4453 } });
     }
   };
 
@@ -1189,11 +1186,32 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
               {activeTab === 'dashboard' ? 'Welcome to your DAA Realty dashboard' : activeTab === 'listings' ? 'Managing properties on daarealty.in' : activeTab === 'media' ? 'All property images and assets' : activeTab === 'inquiries' ? 'Active inquiries and leads' : 'List of users signed up for updates'}
             </p>
           </div>
-          {activeTab === 'listings' && (
-            <button onClick={openAdd} className="bg-[#E65E19] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-[#E65E19]/20 active:scale-95 transition-all uppercase tracking-widest text-xs">
-              <PlusIcon className="w-5 h-5"/> Add Listing
-            </button>
-          )}
+          <div className="flex gap-4">
+            {activeTab === 'inquiries' && inquiries.length > 0 && (
+              <button onClick={() => {
+                const headers = ['First Name', 'Last Name', 'Email', 'Phone', 'Interest', 'Message', 'Date'];
+                const csvData = inquiries.map(inq => [
+                  `"${inq.firstName}"`, `"${inq.lastName}"`, `"${inq.email}"`, `"${inq.phone}"`, `"${inq.interest}"`, `"${inq.message.replace(/"/g, '""')}"`, `"${new Date(inq.createdAt).toLocaleString()}"`
+                ].join(','));
+                const blob = new Blob([headers.join(',') + '\\n' + csvData.join('\\n')], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download', 'inquiries.csv');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              }} className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-green-700 active:scale-95 transition-all uppercase tracking-widest text-xs">
+                Export to Excel
+              </button>
+            )}
+            {activeTab === 'listings' && (
+              <button onClick={openAdd} className="bg-[#E65E19] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-[#E65E19]/20 active:scale-95 transition-all uppercase tracking-widest text-xs">
+                <PlusIcon className="w-5 h-5"/> Add Listing
+              </button>
+            )}
+          </div>
         </header>
 
         {activeTab === 'dashboard' && (
@@ -1350,9 +1368,10 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     <div>
                       <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Type</label>
                       <select value={newProp.type} onChange={e => setNewProp({...newProp, type: e.target.value})} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground">
-                        <option value="Sale">For Sale</option>
-                        <option value="Rent">For Rent</option>
-                        <option value="Lease">For Lease</option>
+                        <option value="Plot">Plot</option>
+                        <option value="Sell">Sell</option>
+                        <option value="Freehold">Freehold</option>
+                        <option value="Flat">Flat</option>
                       </select>
                     </div>
                     <div>
@@ -1461,7 +1480,7 @@ const ServicesPage = () => {
             whileInView={{ opacity: 1 }}
             className="text-stone-500 dark:text-stone-400 text-xl leading-relaxed italic"
           >
-            "Expert guidance and bespoke solutions across the full spectrum of real estate, tailored for efficiency and excellence in every transaction."
+            "Our strength lies in combining construction expertise with real estate insight, enabling us to identify opportunities and execute projects efficiently."
           </motion.p>
         </div>
       </section>
@@ -1472,26 +1491,26 @@ const ServicesPage = () => {
           {
             title: "Government Contracts",
             img: "/assets/service_government.png",
-            desc: "Specialized procurement and property management solutions for federal and local government agencies. We bridge the gap between regulatory requirements and high-performance real estate assets.",
-            features: ["Regulatory Compliance", "Asset Management", "Secure Facility Operations"]
+            desc: "Participation in infrastructure and public works through government tenders.",
+            features: ["Infrastructure Development", "Public Works", "Tender Execution"]
           },
           {
             title: "Real Estate Investments",
             img: "/assets/service_investment.png",
-            desc: "Strategic portfolio management and deep market analysis to maximize your long-term capital growth and yield. We identify high-potential opportunities before they hit the mainstream market.",
-            features: ["Market Intelligence", "Portfolio Diversification", "Yield Optimization"]
+            desc: "Strategic acquisition and development of land and property assets.",
+            features: ["Strategic Acquisition", "Land Development", "Property Assets"]
           },
           {
             title: "Residential Leasing",
             img: "/assets/service_residential.png",
-            desc: "High-end residential property placement for discerning tenants and comprehensive owner representation. Our focus is on lifestyle-driven aesthetics and seamless living experiences.",
-            features: ["Discerning Tenant Search", "Premium Property Curation", "Seamless Tenancy Management"]
+            desc: "Providing quality rental spaces for families and individuals.",
+            features: ["Quality Spaces", "Family Rentals", "Individual Housing"]
           },
           {
             title: "Commercial Leasing",
             img: "/assets/service_commercial.png",
-            desc: "Tailored office, retail, and industrial space solutions designed to help your business thrive. We create environments that foster productivity and brand prestige.",
-            features: ["Strategic Site Selection", "Tenant Representation", "Space Optimization Analysis"]
+            desc: "Offering spaces suited for offices, retail businesses and emerging enterprises.",
+            features: ["Office Spaces", "Retail Businesses", "Emerging Enterprises"]
           }
         ].map((service, idx) => (
           <div key={service.title} className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 md:gap-24 items-center`}>
@@ -1566,7 +1585,7 @@ const ServicesPage = () => {
                   <p className="text-stone-500 text-sm flex items-center gap-2 italic"><MapPin className="w-3 h-3 text-[#E65E19]" /> {prop.location}</p>
                   <p className="text-stone-400 text-xs line-clamp-2 leading-relaxed">{prop.description}</p>
                   <div className="flex justify-between items-center pt-4 border-t border-border">
-                    <span className="font-serif font-bold text-[#E65E19] text-lg">{prop.price}</span>
+                    <span className="font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
                     <Link to="/contact" className="text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-[#E65E19] transition-colors flex items-center gap-2">Details <ArrowRight className="w-3 h-3"/></Link>
                   </div>
                 </div>
@@ -1892,6 +1911,89 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
   );
 };
 
+const ProjectDetailsPage = () => {
+  const { id } = useParams();
+  const [project, setProject] = useState<any>(null);
+
+  useEffect(() => {
+    fetch(getApiUrl('/api/listings')).then(res => res.json()).then(data => {
+      const found = data.find((l: any) => l._id === id);
+      setProject(found);
+    });
+  }, [id]);
+
+  if (!project) return <div className="min-h-screen flex items-center justify-center pt-20"><div className="w-8 h-8 border-4 border-[#E65E19] border-t-transparent rounded-full animate-spin"></div></div>;
+
+  return (
+    <div className="pt-24 bg-background min-h-screen text-foreground transition-colors duration-300">
+      <div className="container mx-auto px-6 py-12">
+        <Link to="/" className="inline-flex items-center gap-2 text-stone-500 hover:text-[#E65E19] font-bold text-xs uppercase tracking-widest mb-8 transition-colors">
+          <ChevronRight className="w-4 h-4 rotate-180" /> Back to Projects
+        </Link>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Images */}
+          <div className="space-y-6">
+            <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl border border-border">
+              <img src={getImageUrl(project.images?.[0])} className="w-full h-full object-cover" alt={project.title} />
+            </div>
+            {project.images?.length > 1 && (
+               <div className="grid grid-cols-3 gap-4">
+                 {project.images.slice(1).map((img: string, i: number) => (
+                   <div key={i} className="aspect-square rounded-2xl overflow-hidden shadow-md border border-border">
+                     <img src={getImageUrl(img)} className="w-full h-full object-cover" alt={`${project.title} additional`} />
+                   </div>
+                 ))}
+               </div>
+            )}
+          </div>
+
+          {/* Details */}
+          <div className="space-y-8">
+            <div>
+              <div className="inline-block bg-[#E65E19] text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6">
+                {project.type || 'Sell'}
+              </div>
+              <h1 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase tracking-tight mb-4">{project.title}</h1>
+              <p className="text-stone-500 text-lg flex items-center gap-2"><MapPin className="w-5 h-5 text-[#E65E19]" /> {project.location}</p>
+            </div>
+            
+            <div className="py-8 border-y border-border grid grid-cols-3 gap-6">
+              <div>
+                <p className="text-[10px] text-stone-400 uppercase tracking-widest font-bold mb-1">Price</p>
+                <p className="text-xl font-serif font-bold text-[#E65E19] text-base">On Request</p>
+              </div>
+              {project.beds > 0 && (
+                <div>
+                  <p className="text-[10px] text-stone-400 uppercase tracking-widest font-bold mb-1">Beds</p>
+                  <p className="text-xl font-bold">{project.beds}</p>
+                </div>
+              )}
+              {project.sqft > 0 && (
+                <div>
+                  <p className="text-[10px] text-stone-400 uppercase tracking-widest font-bold mb-1">Area</p>
+                  <p className="text-xl font-bold">{project.sqft} sqft</p>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold uppercase tracking-widest">About this project</h3>
+              <p className="text-stone-500 leading-relaxed text-lg">{project.description}</p>
+            </div>
+
+            <div className="pt-8">
+              <Link to="/contact" className="inline-block w-full text-center bg-[#E65E19] text-white px-10 py-5 rounded-xl font-bold tracking-widest text-sm uppercase shadow-2xl shadow-[#E65E19]/30 hover:bg-stone-800 transition-all active:scale-95">
+                Inquire About This Project
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- App Component ---
 
 export default function App() {
@@ -1936,6 +2038,7 @@ export default function App() {
           <AnimatePresence mode="wait">
             <Routes>
               <Route path="/" element={IS_ADMIN_SUBDOMAIN ? <Navigate to="/admin" replace /> : <HomePage />} />
+              <Route path="/project/:id" element={<ProjectDetailsPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/contact" element={<ContactPage theme={theme} />} />

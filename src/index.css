@@ -32,6 +32,13 @@
   @apply border-[#E65E19]/20 hover:border-[#E65E19]/40 hover:shadow-[0_0_20px_rgba(230,94,25,0.1)] transition-all duration-500;
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   font-family: 'Outfit', 'Inter', sans-serif;
   @apply bg-background text-foreground transition-colors duration-300 overflow-x-hidden;

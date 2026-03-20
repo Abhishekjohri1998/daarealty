@@ -10,7 +10,7 @@ export interface IListing extends Document {
     lat: number;
     lng: number;
   };
-  type: 'Sale' | 'Rent' | 'Lease';
+  type: 'Plot' | 'Sell' | 'Freehold' | 'Flat';
   beds?: number;
   baths?: number;
   sqft?: number;
@@ -28,7 +28,7 @@ const listingSchema = new Schema<IListing>({
     lat: { type: Number, default: 28.6790 },
     lng: { type: Number, default: 77.4453 }
   },
-  type: { type: String, enum: ['Sale', 'Rent', 'Lease'], default: 'Sale' },
+  type: { type: String, enum: ['Plot', 'Sell', 'Freehold', 'Flat'], default: 'Sell' },
   beds: { type: Number },
   baths: { type: Number },
   sqft: { type: Number },
