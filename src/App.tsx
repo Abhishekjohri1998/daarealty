@@ -1540,8 +1540,8 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
 
         <AnimatePresence>
           {showAddTeam && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/80 backdrop-blur-sm">
-              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-surface w-full max-w-lg rounded-3xl p-10 shadow-2xl border border-border">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/80 backdrop-blur-sm" onClick={() => { setShowAddTeam(false); setIsEditingTeam(false); }}>
+              <motion.div onClick={(e) => e.stopPropagation()} initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-surface w-full max-w-lg rounded-3xl p-10 shadow-2xl border border-border">
                 <div className="flex justify-between items-center mb-8 text-foreground">
                   <h2 className="text-2xl font-serif font-bold uppercase tracking-tight">{isEditingTeam ? 'Edit Team Member' : 'New Team Member'}</h2>
                   <button onClick={() => { setShowAddTeam(false); setIsEditingTeam(false); }} className="text-stone-400 hover:text-[#E65E19] transition-colors"><X/></button>
@@ -1596,8 +1596,8 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
 
         <AnimatePresence>
           {showAdd && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/80 backdrop-blur-sm">
-              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-surface w-full max-w-2xl rounded-3xl p-10 overflow-y-auto max-h-[90vh] shadow-2xl border border-border">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/80 backdrop-blur-sm" onClick={() => { setShowAdd(false); setIsEditing(false); }}>
+              <motion.div onClick={(e) => e.stopPropagation()} initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-surface w-full max-w-2xl rounded-3xl p-10 overflow-y-auto max-h-[90vh] shadow-2xl border border-border">
                 <div className="flex justify-between items-center mb-8 text-foreground">
                   <h2 className="text-2xl font-serif font-bold uppercase tracking-tight">{isEditing ? 'Edit Property Details' : 'New Property Listing'}</h2>
                   <button onClick={() => { setShowAdd(false); setIsEditing(false); }} className="text-stone-400 hover:text-[#E65E19] transition-colors"><X /></button>
