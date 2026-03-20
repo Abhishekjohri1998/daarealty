@@ -1107,6 +1107,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
   const [showAddTeam, setShowAddTeam] = useState(false);
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [newTeamMember, setNewTeamMember] = useState<any>({ name: '', role: '', image: '', order: 0 });
+  const [dragActiveTeam, setDragActiveTeam] = useState(false);
   const [newProp, setNewProp] = useState<any>({
     title: '',
     price: '₹',
@@ -1145,7 +1146,13 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
   };
 
   const fetchTeam = () => {
-    fetch(getApiUrl('/api/team')).then(res => res.json()).then(setTeamMembers).catch(() => {});
+    fetch(getApiUrl('/api/team'))
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setTeamMembers(data);
+        else setTeamMembers([]);
+      })
+      .catch(() => setTeamMembers([]));
   };
 
   const fetchContent = () => {
@@ -1200,6 +1207,35 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
     if (window.confirm("Delete this listing?")) {
       await fetch(`/api/listings/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       fetchListings();
+    }
+  };
+
+  const uploadTeamImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append('images', file);
+    const res = await fetch(getApiUrl('/api/upload'), {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.urls?.length) setNewTeamMember({ ...newTeamMember, image: data.urls[0] });
+    }
+  };
+
+  const handleTeamDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActiveTeam(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      await uploadTeamImage(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleTeamFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      await uploadTeamImage(e.target.files[0]);
     }
   };
 
@@ -1520,27 +1556,30 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     <input value={newTeamMember.role} onChange={e => setNewTeamMember({...newTeamMember, role: e.target.value})} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" required />
                   </div>
                   <div>
-                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Image URL</label>
-                    <div className="flex gap-4">
-                      <input value={newTeamMember.image} onChange={e => setNewTeamMember({...newTeamMember, image: e.target.value})} className="flex-grow bg-background border border-border p-4 rounded-xl outline-none text-foreground" required />
-                      <label className="bg-white border border-border px-4 py-4 rounded-xl font-bold uppercase tracking-widest text-xs cursor-pointer hover:bg-stone-50 transition-colors flex items-center whitespace-nowrap text-stone-900">
-                        Upload
-                        <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
-                          if (!e.target.files?.length) return;
-                          const formData = new FormData();
-                          formData.append('images', e.target.files[0]);
-                          const res = await fetch(getApiUrl('/api/upload'), {
-                            method: 'POST',
-                            headers: { 'Authorization': `Bearer ${token}` },
-                            body: formData
-                          });
-                          if (res.ok) {
-                            const data = await res.json();
-                            if (data.urls?.length) setNewTeamMember({...newTeamMember, image: data.urls[0]});
-                          }
-                        }}/>
-                      </label>
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Image</label>
+                    <div 
+                      className={`w-full h-32 border-2 border-dashed rounded-xl flex items-center justify-center relative transition-colors ${dragActiveTeam ? 'border-[#E65E19] bg-[#E65E19]/10' : 'border-border bg-background hover:bg-surface'}`}
+                      onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setDragActiveTeam(true); }}
+                      onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setDragActiveTeam(false); }}
+                      onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                      onDrop={handleTeamDrop}
+                    >
+                      <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleTeamFileInput} />
+                      {newTeamMember.image ? (
+                        <img src={newTeamMember.image} className="w-full h-full object-contain rounded-xl p-1 pointer-events-none" />
+                      ) : (
+                        <div className="flex flex-col items-center pointer-events-none">
+                          <ImageIcon className="w-6 h-6 text-stone-400 mb-2" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Click or Drag Image Here</span>
+                        </div>
+                      )}
                     </div>
+                    {newTeamMember.image && (
+                      <div className="mt-2 flex justify-between items-center">
+                        <span className="text-[10px] text-stone-500 truncate max-w-[200px]">{newTeamMember.image.split('/').pop()}</span>
+                        <button type="button" onClick={() => setNewTeamMember({...newTeamMember, image: ''})} className="text-[10px] text-red-500 font-bold uppercase tracking-widest hover:underline">Remove</button>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Order (Sort)</label>
