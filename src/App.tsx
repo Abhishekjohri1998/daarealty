@@ -30,7 +30,8 @@ import {
   Upload,
   Crosshair,
   Map as MapIcon,
-  Navigation
+  Navigation,
+  ArrowUp
 } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -306,12 +307,14 @@ const NewsletterSignup = () => {
   );
 };
 
-// --- HomePage Component ---
+// --- HomePage Component (with floating icons added) ---
 const HomePage = () => {
   const [content, setContent] = useState<any>({});
   const [listings, setListings] = useState<any[]>([]);
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
   useEffect(() => {
     fetch(getApiUrl('/api/content')).then(res => res.json()).then(data => {
       const mapped = data.reduce((acc: any, curr: any) => ({ ...acc, [curr.key]: curr.value }), {});
@@ -319,6 +322,15 @@ const HomePage = () => {
     });
     fetch(getApiUrl('/api/listings')).then(res => res.json()).then(data => setListings(data.filter((l: any) => l.featured)));
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Hero Section */}
@@ -374,24 +386,13 @@ const HomePage = () => {
           />
         </div>
       </section>
+
       {/* Core Pillars Section */}
       <section className="py-32 bg-surface/50">
         <div className="container mx-auto px-6 text-foreground">
           <div className="max-w-3xl mx-auto text-center mb-24">
-            <motion.h4
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-6 uppercase"
-            >
-              Our Core Pillars
-            </motion.h4>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="text-3xl md:text-5xl font-serif font-bold leading-tight uppercase"
-            >
-              Every foundation we lay is built on three essential values.
-            </motion.h2>
+            <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-6 uppercase">Our Core Pillars</motion.h4>
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-3xl md:text-5xl font-serif font-bold leading-tight uppercase">Every foundation we lay is built on three essential values.</motion.h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -399,32 +400,19 @@ const HomePage = () => {
               { title: "Aspirations", icon: <TrendingUp className="w-6 h-6 text-[#E65E19]" />, desc: "Transforming ideas into real spaces and opportunities." },
               { title: "Achievements", icon: <CheckCircle2 className="w-6 h-6 text-[#E65E19]" />, desc: "Delivering projects and investments that stand the test of time." }
             ].map((pillar, idx) => (
-              <motion.div
-                key={pillar.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ y: -10 }}
-                viewport={{ once: true }}
-                className="bg-background p-12 rounded-3xl shadow-xl shadow-border/50 border border-border orange-border-glow"
-              >
+              <motion.div key={pillar.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} whileHover={{ y: -10 }} viewport={{ once: true }} className="bg-background p-12 rounded-3xl shadow-xl shadow-border/50 border border-border orange-border-glow">
                 <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mb-8">{pillar.icon}</div>
                 <h3 className="text-2xl font-serif font-bold mb-6 uppercase tracking-wider">{pillar.title}</h3>
                 <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed">{pillar.desc}</p>
               </motion.div>
             ))}
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="mt-16 text-center max-w-4xl mx-auto"
-          >
-            <p className="text-stone-500 dark:text-stone-400 text-lg md:text-xl font-serif italic leading-relaxed">
-              "From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."
-            </p>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mt-16 text-center max-w-4xl mx-auto">
+            <p className="text-stone-500 dark:text-stone-400 text-lg md:text-xl font-serif italic leading-relaxed">"From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."</p>
           </motion.div>
         </div>
       </section>
+
       {/* Featured Properties Section */}
       <section className="py-32 container mx-auto px-6">
         <div className="flex justify-between items-end mb-16">
@@ -436,29 +424,17 @@ const HomePage = () => {
         </div>
         <div className="flex gap-10 overflow-x-auto pb-10 snap-x hide-scrollbar">
           {listings.map((prop, idx) => (
-            <Link
-              to={`/project/${prop._id}`}
-              key={prop._id || idx}
-              className="group bg-surface rounded-[2.5rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[320px] md:min-w-[400px] snap-start"
-            >
+            <Link to={`/project/${prop._id}`} key={prop._id || idx} className="group bg-surface rounded-[2.5rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[320px] md:min-w-[400px] snap-start">
               <div className="aspect-[4/3] relative overflow-hidden">
-                <img
-                  src={getImageUrl(prop.images?.[0])}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  alt={prop.title}
-                />
+                <img src={getImageUrl(prop.images?.[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={prop.title} />
                 <div className="absolute top-6 left-6 flex gap-2">
-                  <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-xl">
-                    {prop.type || 'Sell'}
-                  </span>
+                  <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-xl">{prop.type || 'Sell'}</span>
                 </div>
               </div>
               <div className="p-10 space-y-6 text-foreground">
                 <div>
                   <h3 className="text-xl font-bold uppercase tracking-tight mb-2 group-hover:text-[#E65E19] transition-colors truncate">{prop.title}</h3>
-                  <p className="text-stone-500 dark:text-stone-400 text-sm flex items-center gap-2 truncate">
-                    <MapPin className="w-3 h-3 text-[#E65E19]" /> {prop.location}
-                  </p>
+                  <p className="text-stone-500 dark:text-stone-400 text-sm flex items-center gap-2 truncate"><MapPin className="w-3 h-3 text-[#E65E19]" /> {prop.location}</p>
                 </div>
                 <div className="flex justify-between items-center pt-6 border-t border-border">
                   <span className="text-2xl font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
@@ -476,46 +452,24 @@ const HomePage = () => {
           )}
         </div>
       </section>
+
       {/* Intro Section */}
       <section className="py-32 overflow-hidden bg-background text-foreground">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-20 items-center">
             <div className="lg:w-1/2 relative w-full group">
               <div className="absolute -inset-4 border-2 border-[#E65E19]/20 rounded-3xl translate-x-4 translate-y-4 dark:bg-[#E65E19]/5 blur-sm" />
-              <motion.img
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                src="/assets/skyscraper.png"
-                className="rounded-3xl shadow-2xl relative z-10 w-full aspect-[4/5] object-cover"
-                alt="Skyscraper"
-              />
+              <motion.img initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} src="/assets/skyscraper.png" className="rounded-3xl shadow-2xl relative z-10 w-full aspect-[4/5] object-cover" alt="Skyscraper" />
             </div>
             <div className="lg:w-1/2 space-y-12">
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-              >
-                <p className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg italic uppercase tracking-widest mb-4">
-                  Welcome
-                </p>
+              <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+                <p className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg italic uppercase tracking-widest mb-4">Welcome</p>
                 <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">DAA <br />Realty</h2>
               </motion.div>
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="text-stone-500 dark:text-stone-400 leading-relaxed text-xl mb-6"
-              >
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-xl mb-6">
                 Welcome to DAA Realty, a company driven by a long-term vision of creating sustainable value through real estate investments, infrastructure development and property solutions.
               </motion.p>
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg"
-              >
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg">
                 With a strong presence in real estate investments and property leasing, DAA Realty focuses on building assets that generate lasting value for communities, investors and businesses.
               </motion.p>
               <Link to="/about" className="inline-flex items-center gap-4 text-[#E65E19] font-bold tracking-[0.2em] text-xs uppercase group">
@@ -525,21 +479,15 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
       {/* CTA Section */}
       <section className="py-32">
         <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="bg-[#4A3F35] dark:dark-gradient rounded-[3rem] p-16 md:p-32 text-center text-white relative overflow-hidden shadow-2xl transition-colors duration-300 border border-white/5"
-          >
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="bg-[#4A3F35] dark:dark-gradient rounded-[3rem] p-16 md:p-32 text-center text-white relative overflow-hidden shadow-2xl transition-colors duration-300 border border-white/5">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#E65E19]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
             <div className="relative z-10 space-y-12">
               <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">Ready to realize your aspirations?</h2>
-              <p className="text-stone-400 max-w-2xl mx-auto text-lg leading-relaxed">
-                Join the hundreds of families and businesses who have found their foundation with DAA Realty.
-              </p>
+              <p className="text-stone-400 max-w-2xl mx-auto text-lg leading-relaxed">Join the hundreds of families and businesses who have found their foundation with DAA Realty.</p>
               <Link to="/contact" className="inline-block bg-[#E65E19] text-white px-12 py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase">
                 Start Your Journey Today
               </Link>
@@ -547,11 +495,41 @@ const HomePage = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* FLOATING ICONS - Only on Home Page */}
+      {/* WhatsApp */}
+      <motion.a
+        href="https://wa.me/917011792465"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#20c65a] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95"
+        title="Chat on WhatsApp"
+      >
+        <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+      </motion.a>
+
+      {/* Jump to Top */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-24 right-6 bg-[#E65E19] hover:bg-[#d14e15] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95"
+            title="Jump to Top"
+          >
+            <ArrowUp className="w-7 h-7" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
-// --- AboutPage Component ---
+// --- All other components remain exactly the same ---
 const AboutPage = () => {
   const [founderImage, setFounderImage] = useState<string>('/assets/executive_portrait.png');
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
@@ -754,7 +732,6 @@ const AboutPage = () => {
   );
 };
 
-// --- PhilosophyPage Component ---
 const PhilosophyPage = () => {
   return (
     <div className="pt-20 bg-background min-h-screen text-foreground transition-colors duration-300">
@@ -888,7 +865,6 @@ const FileUploader = ({ onUpload, token }: { onUpload: (urls: string[]) => void,
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleFiles = async (files: FileList) => {
     setUploading(true);
-    // Create local previews immediately
     const localPreviews = Array.from(files).map(file => URL.createObjectURL(file));
     setPreviews(prev => [...prev, ...localPreviews]);
     const formData = new FormData();
@@ -917,12 +893,10 @@ const FileUploader = ({ onUpload, token }: { onUpload: (urls: string[]) => void,
       const data = await res.json();
       if (data.urls) {
         onUpload(data.urls);
-        // Clear previews once uploaded
         setPreviews([]);
       }
     } catch (err) {
       console.error("Upload failed:", err);
-      // Remove previews on failure
       setPreviews([]);
     } finally {
       setUploading(false);
@@ -1481,7 +1455,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                   <button onClick={() => { setShowAdd(false); setIsEditing(false); }} className="text-stone-400 hover:text-[#E65E19] transition-colors"><X /></button>
                 </div>
                 <form onSubmit={addListing} className="grid grid-cols-1 md:grid-cols-2 gap-6 text-foreground">
-                  {/* ── BASIC INFO ── */}
+                  {/* BASIC INFO */}
                   <div className="col-span-2 border-b border-border pb-2 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Basic Information</p>
                   </div>
@@ -1513,7 +1487,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     <input type="checkbox" checked={newProp.featured} onChange={e => setNewProp({ ...newProp, featured: e.target.checked })} className="w-6 h-6 rounded border-border text-[#E65E19] cursor-pointer" />
                     <label className="text-xs font-bold uppercase text-stone-400 tracking-widest">Mark as Featured</label>
                   </div>
-                  {/* ── PROPERTY SPECS ── */}
+                  {/* PROPERTY SPECS */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Property Specifications</p>
                   </div>
@@ -1553,17 +1527,15 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Description *</label>
                     <textarea value={newProp.description} onChange={e => setNewProp({ ...newProp, description: e.target.value })} className="w-full bg-background border border-border p-4 rounded-xl h-28 focus:ring-2 focus:ring-[#E65E19]/20 outline-none text-foreground" placeholder="Full project description..."></textarea>
                   </div>
-
-                  {/* ── AMENITIES (NEW CHECKBOXES) ── */}
                   {/* AMENITIES */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
-                    <p className="text-10px font-bold uppercase tracking-widest text-[#E65E19]">Amenities</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Amenities</p>
                   </div>
                   <div className="col-span-2">
-                    <label className="text-xs font-bold uppercase text-stone-400 block mb-3 tracking-widest"> Select Amenities </label>
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-3 tracking-widest">Select Amenities</label>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-1 bg-background border border-border rounded-xl p-4 max-h-64 overflow-y-auto">
                       {PREDEFINED_AMENITIES.map((amenity: string) => (
-                        <label key={amenity} className="flex items-center gap-2 cursor-pointer group p-2 rounded-lg hover:bg-surface transition-colors" >
+                        <label key={amenity} className="flex items-center gap-2 cursor-pointer group p-2 rounded-lg hover:bg-surface transition-colors">
                           <input
                             type="checkbox"
                             checked={newProp.amenities?.includes(amenity) || false}
@@ -1586,13 +1558,12 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                       ))}
                     </div>
                     {(newProp.amenities?.length || 0) > 0 && (
-                      <p className="text-10px text-[#E65E19] mt-2 font-bold uppercase tracking-widest">
+                      <p className="text-[10px] text-[#E65E19] mt-2 font-bold uppercase tracking-widest">
                         ✓ {newProp.amenities.length} ameniti{newProp.amenities.length === 1 ? 'y' : 'es'} selected
                       </p>
                     )}
                   </div>
-
-                  {/* ── FLOOR PLANS ── */}
+                  {/* FLOOR PLANS */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Floor Plans</p>
                   </div>
@@ -1610,7 +1581,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                       </div>
                     )}
                   </div>
-                  {/* ── RERA DETAILS ── */}
+                  {/* RERA DETAILS */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">RERA Details</p>
                   </div>
@@ -1632,7 +1603,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                       </div>
                     )}
                   </div>
-                  {/* ── ABOUT DEVELOPER ── */}
+                  {/* ABOUT DEVELOPER */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Developer Information</p>
                   </div>
@@ -1644,7 +1615,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">About Developer</label>
                     <textarea value={newProp.aboutDeveloper} onChange={e => setNewProp({ ...newProp, aboutDeveloper: e.target.value })} className="w-full bg-background border border-border p-4 rounded-xl h-28 outline-none text-foreground" placeholder="Developer background and description..."></textarea>
                   </div>
-                  {/* ── FAQ ── */}
+                  {/* FAQ */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">FAQ</p>
                   </div>
@@ -1660,7 +1631,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                       <Plus className="w-4 h-4" /> Add FAQ Item
                     </button>
                   </div>
-                  {/* ── LINKS & MEDIA ── */}
+                  {/* LINKS & MEDIA */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Links & Downloads</p>
                   </div>
@@ -1672,7 +1643,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Location Map Image URL</label>
                     <input value={newProp.locationMapUrl} onChange={e => setNewProp({ ...newProp, locationMapUrl: e.target.value })} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground" placeholder="https://... or upload below" />
                   </div>
-                  {/* ── GALLERY IMAGES ── */}
+                  {/* GALLERY IMAGES */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Property Gallery Images</p>
                   </div>
@@ -1767,7 +1738,6 @@ const ServicesPage = () => {
           }
         ].map((service, idx) => (
           <div key={service.title} className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 md:gap-24 items-center`}>
-            {/* Image side */}
             <motion.div
               initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -1784,7 +1754,6 @@ const ServicesPage = () => {
                 <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500" />
               </div>
             </motion.div>
-            {/* Content side */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1883,7 +1852,6 @@ const MapComponent = ({ theme }: { theme: 'light' | 'dark' }) => {
         scrollWheelZoom: false,
         zoomControl: false
       });
-      // Initialize with Satellite as it was requested last
       tileLayerRef.current = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri'
       }).addTo(mapInstance.current);
@@ -1905,7 +1873,6 @@ const MapComponent = ({ theme }: { theme: 'light' | 'dark' }) => {
       }
     };
   }, []);
-  // Handle Layer Switching
   useEffect(() => {
     if (mapInstance.current) {
       // @ts-ignore
@@ -1930,7 +1897,6 @@ const MapComponent = ({ theme }: { theme: 'light' | 'dark' }) => {
   return (
     <div className="w-full h-full relative">
       <div ref={mapRef} className="w-full h-full" />
-      {/* Premium Toggle Control */}
       <div className="absolute top-6 left-6 z-[1000] flex flex-col gap-1 bg-background/80 dark:bg-stone-900/80 backdrop-blur-md p-1.5 rounded-2xl shadow-2xl border border-border">
         <button
           onClick={() => setViewMode('standard')}
@@ -1973,7 +1939,6 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
   };
   return (
     <div className="pt-20 bg-background min-h-screen text-foreground transition-colors duration-300">
-      {/* Hero Header */}
       <section className="py-24 bg-surface/30">
         <div className="container mx-auto px-6 text-center">
           <motion.h1
@@ -1995,7 +1960,6 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
       </section>
       <section className="py-20 container mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-12">
-          {/* Left: Get In Touch */}
           <div className="lg:w-2/5 space-y-12">
             <h2 className="text-2xl font-serif font-bold uppercase tracking-widest">Get In Touch</h2>
             <div className="flex gap-6 items-start">
@@ -2031,13 +1995,11 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
                 For partnerships, leasing opportunities, or project discussions, please contact us and our team will respond promptly.
               </p>
             </div>
-            {/* Proper Interactable Map View */}
             <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-border/50 border border-border h-[450px] relative group z-0">
               <MapComponent theme={theme} />
               <div className="absolute inset-0 border-[16px] border-white/5 dark:border-white/2 pointer-events-none rounded-[2.5rem]" />
             </div>
           </div>
-          {/* Right: Inquiry Form */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -2131,37 +2093,9 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
   );
 };
 
-// --- Predefined Amenities List ---
-const PREDEFINED_AMENITIES: string[] = [
-  'Bank / ATM',
-  'CCTV Surveillance',
-  '24/7 Security',
-  'Club House',
-  'Earthquake Resistant',
-  'Landscaped Garden',
-  'High-Speed WiFi',
-  'Jogging Track',
-  'Kids Play Area',
-  'Covered Parking',
-  'Power Backup',
-  'Rainwater Harvesting',
-  'Water Supply',
-  'Swimming Pool',
-  'Gymnasium',
-  'Lift / Elevator',
-  'Fire Safety',
-  'Temple / Prayer Hall',
-  'Hospital Nearby',
-  'School Nearby',
-  'Shopping Complex',
-  'Library',
-  'Solar Panels',
-  'Green Building',
-  'Intercom',
-];
-
+// --- Predefined Amenities & Helpers ---
+const PREDEFINED_AMENITIES: string[] = ['Bank / ATM', 'CCTV Surveillance', '24/7 Security', 'Club House', 'Earthquake Resistant', 'Landscaped Garden', 'High-Speed WiFi', 'Jogging Track', 'Kids Play Area', 'Covered Parking', 'Power Backup', 'Rainwater Harvesting', 'Water Supply', 'Swimming Pool', 'Gymnasium', 'Lift / Elevator', 'Fire Safety', 'Temple / Prayer Hall', 'Hospital Nearby', 'School Nearby', 'Shopping Complex', 'Library', 'Solar Panels', 'Green Building', 'Intercom',];
 const AMENITY_ICONS: Record<string, string> = { 'bank': '🏦', 'atm': '🏦', 'cctv': '📹', 'security': '🔒', 'club': '🏛️', 'earthquake': '🏗️', 'garden': '🌸', 'flower': '🌸', 'wifi': '📶', 'internet': '📶', 'jogging': '🏃', 'strolling': '🏃', 'kids': '🎠', 'play': '🎠', 'parking': '🅿️', 'power': '⚡', 'backup': '⚡', 'rain': '💧', 'water': '💧', 'swimming': '🏊', 'pool': '🏊', 'gym': '💪', 'lift': '🛗', 'elevator': '🛗', 'fire': '🧯', 'temple': '🛕', 'hospital': '🏥', 'school': '🏫', 'shopping': '🛒', 'library': '📚', 'solar': '☀️', 'green': '🌿', 'intercom': '📞', };
-
 const getAmenityIcon = (name: string) => {
   const lower = name.toLowerCase();
   for (const key in AMENITY_ICONS) {
@@ -2209,7 +2143,6 @@ const ProjectDetailsPage = () => {
   ];
   return (
     <div className="pt-20 bg-background min-h-screen text-foreground transition-colors duration-300">
-      {/* Breadcrumb */}
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center gap-2 text-sm text-stone-500">
           <Link to="/" className="hover:text-[#E65E19] transition-colors">Home</Link>
@@ -2219,7 +2152,6 @@ const ProjectDetailsPage = () => {
           <span className="text-foreground font-medium truncate max-w-xs">{project.title}</span>
         </div>
       </div>
-      {/* Title */}
       <div className="container mx-auto px-6 pb-4">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground">{project.title}</h1>
         <p className="flex items-center gap-1 text-stone-500 mt-1">
@@ -2229,7 +2161,6 @@ const ProjectDetailsPage = () => {
           )}
         </p>
       </div>
-      {/* Hero Image Grid */}
       <div className="container mx-auto px-6 mb-8">
         <div className="grid grid-cols-3 gap-2 rounded-2xl overflow-hidden h-[420px]">
           <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setGalleryOpen(0)}>
@@ -2247,12 +2178,9 @@ const ProjectDetailsPage = () => {
           ))}
         </div>
       </div>
-      {/* Main Layout: Content + Sticky Lead Form */}
       <div className="container mx-auto px-6 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* LEFT CONTENT */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Price + Quick Summary Card */}
             <div className="border border-border rounded-2xl overflow-hidden">
               <div className="p-6 flex flex-wrap gap-6 items-center justify-between border-b border-border">
                 <div>
@@ -2281,7 +2209,6 @@ const ProjectDetailsPage = () => {
                 </div>
               </div>
             </div>
-            {/* Sticky Tab Bar */}
             <div className="sticky top-20 z-30 bg-background pt-2 pb-0 -mx-6 px-6 border-b border-border">
               <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-0">
                 {tabs.map(tab => (
@@ -2291,9 +2218,7 @@ const ProjectDetailsPage = () => {
                 ))}
               </div>
             </div>
-            {/* Tab Content */}
             <div className="min-h-[300px]">
-              {/* DESCRIPTION */}
               {activeTab === 'description' && (
                 <div className="space-y-6">
                   <div className="bg-surface border border-border rounded-2xl p-6">
@@ -2305,8 +2230,7 @@ const ProjectDetailsPage = () => {
                   </div>
                 </div>
               )}
-              {/* AMENITIES */}
-              {activeTab === 'amenities' && (
+              {activeTab === 'amenities' && project.amenities?.length && (
                 <div className="bg-surface border border-border rounded-2xl overflow-hidden">
                   <div className="bg-gradient-to-r from-[#1e3a5f] to-[#a02060] text-white px-5 py-3">
                     <h2 className="font-bold text-lg">{project.title} Amenities</h2>
@@ -2321,8 +2245,7 @@ const ProjectDetailsPage = () => {
                   </div>
                 </div>
               )}
-              {/* FLOOR PLANS */}
-              {activeTab === 'floorplans' && (
+              {activeTab === 'floorplans' && project.floorPlans?.length && (
                 <div className="bg-surface border border-border rounded-2xl overflow-hidden">
                   <div className="bg-gradient-to-r from-[#1e3a5f] to-[#a02060] text-white px-5 py-3">
                     <h2 className="font-bold text-lg">{project.title} Floor Plans</h2>
@@ -2337,7 +2260,6 @@ const ProjectDetailsPage = () => {
                   </div>
                 </div>
               )}
-              {/* RERA DETAILS */}
               {activeTab === 'rera' && (
                 <div className="bg-surface border border-border rounded-2xl overflow-hidden">
                   <div className="bg-gradient-to-r from-[#1e3a5f] to-[#a02060] text-white px-5 py-3">
@@ -2366,7 +2288,6 @@ const ProjectDetailsPage = () => {
                   </div>
                 </div>
               )}
-              {/* BUILDER */}
               {activeTab === 'builder' && (
                 <div className="space-y-6">
                   {project.developerName && (
@@ -2382,8 +2303,7 @@ const ProjectDetailsPage = () => {
                   )}
                 </div>
               )}
-              {/* GALLERY */}
-              {activeTab === 'gallery' && (
+              {activeTab === 'gallery' && project.images?.length > 1 && (
                 <div className="bg-surface border border-border rounded-2xl overflow-hidden">
                   <div className="bg-gradient-to-r from-[#1e3a5f] to-[#a02060] text-white px-5 py-3">
                     <h2 className="font-bold text-lg">Gallery</h2>
@@ -2397,7 +2317,6 @@ const ProjectDetailsPage = () => {
                   </div>
                 </div>
               )}
-              {/* LOCATION MAP */}
               {activeTab === 'map' && (
                 <div className="bg-surface border border-border rounded-2xl overflow-hidden">
                   <div className="bg-gradient-to-r from-[#1e3a5f] to-[#a02060] text-white px-5 py-3">
@@ -2413,8 +2332,7 @@ const ProjectDetailsPage = () => {
                   </div>
                 </div>
               )}
-              {/* FAQ */}
-              {activeTab === 'faq' && (
+              {activeTab === 'faq' && project.faq?.length && (
                 <div className="bg-surface border border-border rounded-2xl overflow-hidden">
                   <div className="bg-gradient-to-r from-[#1e3a5f] to-[#a02060] text-white px-5 py-3">
                     <h2 className="font-bold text-lg">Frequently Asked Questions</h2>
@@ -2432,8 +2350,7 @@ const ProjectDetailsPage = () => {
                   </div>
                 </div>
               )}
-              {/* BROCHURE */}
-              {activeTab === 'brochure' && (
+              {activeTab === 'brochure' && project.brochureUrl && (
                 <div className="bg-surface border border-border rounded-2xl overflow-hidden">
                   <div className="bg-gradient-to-r from-[#1e3a5f] to-[#a02060] text-white px-5 py-3">
                     <h2 className="font-bold text-lg">Download Brochure</h2>
@@ -2447,7 +2364,6 @@ const ProjectDetailsPage = () => {
               )}
             </div>
           </div>
-          {/* RIGHT: STICKY LEAD FORM */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 bg-surface border border-border rounded-2xl p-6 shadow-lg">
               <h3 className="text-xl font-bold text-foreground mb-6">Interested To Buy Property</h3>
@@ -2481,7 +2397,6 @@ const ProjectDetailsPage = () => {
           </div>
         </div>
       </div>
-      {/* LIGHTBOX GALLERY */}
       <AnimatePresence>
         {galleryOpen !== null && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" onClick={() => setGalleryOpen(null)}>
@@ -2506,24 +2421,18 @@ export default function App() {
   const [token, setToken] = useState(localStorage.getItem('daa_admin_token') || '');
   const [theme, setTheme] = useState<'light' | 'dark'>((localStorage.getItem(THEME_KEY) as 'light' | 'dark') || 'light');
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
     localStorage.setItem(THEME_KEY, theme);
   }, [theme]);
   useEffect(() => {
-    // Connectivity Ping with Version Check
     fetch(getApiUrl('/api/ping'))
       .then(async res => {
         const version = res.headers.get('X-Daa-Server-Version');
         const data = await res.json();
         console.log(`[DAA-DIAGNOSTIC] Backend connected! Version: ${version || 'Unknown'}, Data:`, data);
       })
-      .catch(err => {
-        console.error('[DAA-DIAGNOSTIC] Backend connection failed. Ensure server.ts is running on port 3000:', err);
-      });
+      .catch(err => console.error('[DAA-DIAGNOSTIC] Backend connection failed:', err));
   }, []);
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
   const logout = () => {
