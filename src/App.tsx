@@ -1786,7 +1786,7 @@ const ServicesPage = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {listings.map((prop, idx) => (
-              <Link to={`/project/${prop._id}`} key={prop._id || idx} className="block group">  {/* ✅ Wrap with Link */}
+              <Link to={`/project/${prop._id}`} key={prop._id || idx} className="block group">
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -1794,17 +1794,43 @@ const ServicesPage = () => {
                   viewport={{ once: true }}
                   className="bg-surface rounded-3xl border border-border shadow-xl hover:shadow-[#E65E19]/10 transition-all overflow-hidden cursor-pointer"
                 >
+
+                  {/* ✅ Property Image — Added */}
+                  <div className="aspect-[4/3] relative overflow-hidden">
+                    <img
+                      src={getImageUrl(prop.images?.[0])}
+                      alt={prop.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    {/* Type Badge */}
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-lg">
+                        {prop.type || 'Sell'}
+                      </span>
+                    </div>
+                    {/* Gradient overlay at bottom for smooth transition into card body */}
+                    <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-surface to-transparent" />
+                  </div>
+
+                  {/* Text Content */}
                   <div className="p-8 space-y-4">
-                    <h3 className="text-lg font-bold uppercase tracking-tight truncate group-hover:text-[#E65E19] transition-colors">{prop.title}</h3>
-                    <p className="text-stone-500 text-sm flex items-center gap-2 italic"><MapPin className="w-3 h-3 text-[#E65E19]" />{prop.location}</p>
+                    <h3 className="text-lg font-bold uppercase tracking-tight truncate group-hover:text-[#E65E19] transition-colors">
+                      {prop.title}
+                    </h3>
+                    <p className="text-stone-500 text-sm flex items-center gap-2 italic">
+                      <MapPin className="w-3 h-3 text-[#E65E19]" />
+                      {prop.location}
+                    </p>
                     <p className="text-stone-400 text-xs line-clamp-2 leading-relaxed">{prop.description}</p>
                   </div>
+
                   <div className="flex justify-between items-center px-8 py-4 border-t border-border">
                     <span className="font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 group-hover:text-[#E65E19] transition-colors flex items-center gap-2">
                       Details <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>
+
                 </motion.div>
               </Link>
             ))}
