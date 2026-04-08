@@ -347,9 +347,9 @@ const Footer = () => {
                 </div>
                 <ul className="space-y-3">
                   {[
-                    { label: 'Privacy Policy', path: '#' },
-                    { label: 'Terms of Service', path: '#' },
-                    { label: 'RERA Disclaimer', path: '#' },
+                    { label: 'Privacy Policy', path: '/privacy-policy' },
+                    { label: 'Terms of Service', path: '/terms-of-service' },
+                    { label: 'RERA Disclaimer', path: '/rera-disclaimer' },
                   ].map(item => (
                     <li key={item.label}>
                       <Link to={item.path}
@@ -379,6 +379,441 @@ const Footer = () => {
     </footer>
   );
 };
+
+// ─── Shared Legal Page Layout ───────────────────────────────────────────────
+const LegalPageLayout = ({
+  badge, title, subtitle, lastUpdated, sections
+}: {
+  badge: string;
+  title: string;
+  subtitle: string;
+  lastUpdated: string;
+  sections: { heading: string; content: (string | { type: 'list'; items: string[] })[] }[];
+}) => (
+  <div className="pt-20 bg-background min-h-screen text-foreground transition-colors duration-300">
+    {/* Hero */}
+    <section className="py-20 bg-surface/50 border-b border-border">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] uppercase mb-4"
+        >
+          {badge}
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-3xl md:text-6xl font-serif font-bold leading-tight uppercase mb-6"
+        >
+          {title}
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-stone-500 dark:text-stone-400 text-lg leading-relaxed max-w-2xl mb-6"
+        >
+          {subtitle}
+        </motion.p>
+        <div className="flex items-center gap-3">
+          <div className="w-1.5 h-1.5 bg-[#E65E19] rounded-full" />
+          <p className="text-stone-400 text-xs uppercase tracking-widest font-bold">Last Updated: {lastUpdated}</p>
+        </div>
+      </div>
+    </section>
+
+    {/* Content */}
+    <section className="py-20">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto space-y-14">
+          {sections.map((section, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              className="space-y-5"
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-[10px] font-bold text-[#E65E19] bg-[#E65E19]/10 rounded-lg px-2 py-1 uppercase tracking-widest shrink-0 mt-1">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h2 className="text-xl md:text-2xl font-serif font-bold uppercase tracking-wide text-foreground">
+                  {section.heading}
+                </h2>
+              </div>
+              <div className="pl-10 space-y-4">
+                {section.content.map((block, j) =>
+                  typeof block === 'string' ? (
+                    <p key={j} className="text-stone-600 dark:text-stone-400 leading-relaxed text-[15px]">
+                      {block}
+                    </p>
+                  ) : (
+                    <ul key={j} className="space-y-2">
+                      {block.items.map((item, k) => (
+                        <li key={k} className="flex items-start gap-3 text-stone-600 dark:text-stone-400 text-[15px]">
+                          <span className="w-1.5 h-1.5 bg-[#E65E19] rounded-full mt-2 shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )
+                )}
+              </div>
+              {i < sections.length - 1 && <div className="border-b border-border mt-8" />}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Contact CTA */}
+        <div className="max-w-4xl mx-auto mt-20 bg-surface border border-border rounded-3xl p-10 md:p-14 flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
+          <div>
+            <h3 className="text-xl font-serif font-bold uppercase tracking-wide mb-2">Have Questions?</h3>
+            <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed max-w-md">
+              If you have any questions about this policy or how we handle your information, feel free to reach out to our team.
+            </p>
+          </div>
+          <Link
+            to="/contact"
+            className="shrink-0 bg-[#E65E19] text-white px-8 py-4 rounded-xl font-bold tracking-widest text-xs uppercase shadow-lg shadow-[#E65E19]/20 hover:bg-stone-800 transition-all transform hover:-translate-y-1"
+          >
+            Contact Us
+          </Link>
+        </div>
+      </div>
+    </section>
+  </div>
+);
+
+// ─── Privacy Policy Page ─────────────────────────────────────────────────────
+const PrivacyPolicyPage = () => (
+  <LegalPageLayout
+    badge="Legal & Policy"
+    title="Privacy Policy"
+    subtitle="At DAA Realty, we are committed to protecting your personal information and your right to privacy. This policy explains what data we collect, why we collect it, and how we use it."
+    lastUpdated="April 2026"
+    sections={[
+      {
+        heading: 'Information We Collect',
+        content: [
+          'When you visit our website or submit an inquiry, we may collect certain personal information to provide you with our services.',
+          {
+            type: 'list',
+            items: [
+              'Contact details: Full name, email address, phone number.',
+              'Inquiry details: Your message, area of interest (buying, selling, leasing, investment).',
+              'Newsletter subscription: Email address for updates.',
+              'Usage data: Browser type, IP address, pages visited, and time spent on site (via analytics).',
+              'Location data: Only if you explicitly share it while using our map-based property tools.',
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'How We Use Your Information',
+        content: [
+          'Your information is used solely to provide and improve our real estate services.',
+          {
+            type: 'list',
+            items: [
+              'To respond to your property inquiries and connect you with our team.',
+              'To send you relevant property updates, listings, and newsletters (only if you have opted in).',
+              'To improve our website experience and understand user preferences.',
+              'To comply with applicable laws and regulatory requirements, including RERA guidelines.',
+              'To prevent fraud and ensure the security of our platform.',
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Data Sharing & Third Parties',
+        content: [
+          'DAA Realty does not sell, trade, or rent your personal information to third parties.',
+          'We may share your data only in the following limited circumstances:',
+          {
+            type: 'list',
+            items: [
+              'With trusted service providers (e.g., email platforms, analytics tools) under strict confidentiality agreements.',
+              'With regulatory authorities or law enforcement agencies when required by law.',
+              'With project developers or builders only when you specifically inquire about their listed property, and only to the extent necessary to facilitate the inquiry.',
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Cookies & Tracking',
+        content: [
+          'Our website uses cookies to enhance your browsing experience. Cookies are small text files stored on your device that help us remember your preferences and understand how you use our site.',
+          'You may disable cookies through your browser settings at any time. Please note that disabling cookies may affect certain features of the website.',
+        ]
+      },
+      {
+        heading: 'Data Retention',
+        content: [
+          'We retain your personal data only as long as necessary to fulfil the purpose for which it was collected, or as required by applicable law. Inquiry records are retained for up to 3 years. Newsletter subscribers may unsubscribe at any time.',
+        ]
+      },
+      {
+        heading: 'Your Rights',
+        content: [
+          'You have the right to:',
+          {
+            type: 'list',
+            items: [
+              'Request access to the personal data we hold about you.',
+              'Request correction of inaccurate or outdated information.',
+              'Request deletion of your personal data, subject to legal obligations.',
+              'Opt out of marketing communications at any time.',
+              'Withdraw consent where processing is based on consent.',
+            ]
+          },
+          'To exercise any of these rights, please contact us at daarealty@outlook.com.'
+        ]
+      },
+      {
+        heading: 'Data Security',
+        content: [
+          'We implement appropriate technical and organisational measures to protect your personal information against unauthorised access, alteration, disclosure, or destruction. However, no internet transmission is 100% secure, and we encourage you to take precautions when sharing information online.',
+        ]
+      },
+      {
+        heading: 'Changes to This Policy',
+        content: [
+          'DAA Realty may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will post the updated policy on this page with a revised date. We encourage you to review this page periodically.',
+        ]
+      },
+      {
+        heading: 'Contact Us',
+        content: [
+          'If you have any questions, concerns, or requests regarding this Privacy Policy, please contact us:',
+          {
+            type: 'list',
+            items: [
+              'Email: daarealty@outlook.com',
+              'Phone: +91-95607 52744 / +91-70117 92465',
+              'Address: B-29, 4th Floor, RDC, Rajnagar, Ghaziabad, Uttar Pradesh – 201002',
+            ]
+          }
+        ]
+      }
+    ]}
+  />
+);
+
+// ─── Terms of Service Page ───────────────────────────────────────────────────
+const TermsOfServicePage = () => (
+  <LegalPageLayout
+    badge="Legal & Policy"
+    title="Terms of Service"
+    subtitle="By accessing or using the DAA Realty website and services, you agree to be bound by the following Terms of Service. Please read them carefully before using our platform."
+    lastUpdated="April 2026"
+    sections={[
+      {
+        heading: 'Acceptance of Terms',
+        content: [
+          'By accessing daarealty.in and using any of our services — including property inquiries, newsletter sign-ups, or browsing listings — you confirm that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy.',
+          'If you do not agree with any part of these terms, please do not use our website or services.',
+        ]
+      },
+      {
+        heading: 'Nature of Services',
+        content: [
+          'DAA Realty provides real estate information, property listings, leasing solutions, and investment advisory services. Our platform facilitates:',
+          {
+            type: 'list',
+            items: [
+              'Browsing and inquiring about listed residential and commercial properties.',
+              'Connecting prospective buyers, tenants, and investors with our advisory team.',
+              'Accessing project-related information including specifications, RERA details, and developer information.',
+              'Subscribing to property updates and newsletters.',
+            ]
+          },
+          'DAA Realty acts as a facilitator and does not guarantee the completion of any transaction. All property transactions are subject to separate formal agreements between the concerned parties.',
+        ]
+      },
+      {
+        heading: 'Accuracy of Information',
+        content: [
+          'While we strive to ensure that all information on our platform is accurate and up to date, DAA Realty does not warrant or guarantee the completeness, accuracy, or reliability of any listing, project detail, price, or availability shown on the website.',
+          'Property prices, possession dates, and availability are subject to change without prior notice. Users are advised to independently verify all information before making any financial or legal commitments.',
+        ]
+      },
+      {
+        heading: 'User Obligations',
+        content: [
+          'As a user of the DAA Realty website, you agree to:',
+          {
+            type: 'list',
+            items: [
+              'Provide accurate, current, and complete information when submitting inquiries or signing up for our newsletter.',
+              'Not use the platform for any unlawful, fraudulent, or harmful purpose.',
+              'Not attempt to reverse-engineer, scrape, or copy any content, data, or functionality from the website without prior written consent.',
+              'Not impersonate any person or entity or falsely represent your affiliation with any person or organisation.',
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Intellectual Property',
+        content: [
+          'All content on the DAA Realty website — including text, logos, images, design, graphics, and software — is the exclusive property of DAA Realty or its licensed partners and is protected under applicable intellectual property laws.',
+          'You may not reproduce, distribute, modify, or create derivative works of any content without prior written permission from DAA Realty.',
+        ]
+      },
+      {
+        heading: 'Third-Party Links',
+        content: [
+          'Our website may contain links to third-party websites, including developer websites, RERA portals, and mapping services. These links are provided for your convenience only.',
+          'DAA Realty has no control over and accepts no responsibility for the content, privacy practices, or availability of third-party websites. Accessing such links is at your own risk.',
+        ]
+      },
+      {
+        heading: 'Limitation of Liability',
+        content: [
+          'To the maximum extent permitted by applicable law, DAA Realty shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising from:',
+          {
+            type: 'list',
+            items: [
+              'Your use of or inability to use the website or services.',
+              'Reliance on any information, listing, or content provided on the website.',
+              'Any transaction, investment decision, or commitment made based on information obtained through our platform.',
+              'Unauthorised access to or alteration of your data.',
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Governing Law & Jurisdiction',
+        content: [
+          'These Terms of Service are governed by and construed in accordance with the laws of India. Any disputes arising in connection with these terms shall be subject to the exclusive jurisdiction of the courts located in Ghaziabad, Uttar Pradesh.',
+        ]
+      },
+      {
+        heading: 'Modifications to Terms',
+        content: [
+          'DAA Realty reserves the right to update or modify these Terms of Service at any time. Changes will be posted on this page with an updated date. Continued use of the website after changes are posted constitutes your acceptance of the revised terms.',
+        ]
+      },
+      {
+        heading: 'Contact Us',
+        content: [
+          'For any questions regarding these Terms of Service, please reach out to us:',
+          {
+            type: 'list',
+            items: [
+              'Email: daarealty@outlook.com',
+              'Phone: +91-95607 52744 / +91-70117 92465',
+              'Address: B-29, 4th Floor, RDC, Rajnagar, Ghaziabad, Uttar Pradesh – 201002',
+            ]
+          }
+        ]
+      }
+    ]}
+  />
+);
+
+// ─── RERA Disclaimer Page ────────────────────────────────────────────────────
+const ReraDisclaimerPage = () => (
+  <LegalPageLayout
+    badge="Legal & Policy"
+    title="RERA Disclaimer"
+    subtitle="This disclaimer is issued in compliance with the Real Estate (Regulation and Development) Act, 2016 (RERA). All prospective buyers and investors are advised to read this carefully."
+    lastUpdated="April 2026"
+    sections={[
+      {
+        heading: 'About RERA',
+        content: [
+          'The Real Estate (Regulation and Development) Act, 2016 (RERA) is a landmark legislation enacted by the Government of India to protect homebuyers and boost investment in the real estate sector.',
+          'RERA mandates that all real estate projects above a specified threshold be registered with the respective State Real Estate Regulatory Authority before any advertisement, sale, or booking. In Uttar Pradesh, this body is known as UP RERA (Uttar Pradesh Real Estate Regulatory Authority).',
+        ]
+      },
+      {
+        heading: 'RERA Registration of Listed Projects',
+        content: [
+          'Projects listed on the DAA Realty website that are subject to RERA registration will display their RERA Registration Number on the respective project detail page.',
+          'Prospective buyers are strongly advised to:',
+          {
+            type: 'list',
+            items: [
+              'Verify the RERA registration details independently on the UP RERA portal: www.up-rera.in',
+              'Confirm the project status, approved plans, and developer details directly with the concerned authority.',
+              'Review the registered project brochure, floor plans, and specifications before making any payment or signing any agreement.',
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Role of DAA Realty',
+        content: [
+          'DAA Realty operates as a real estate advisory and facilitation company. In its capacity as a facilitator or channel partner for third-party developers, DAA Realty:',
+          {
+            type: 'list',
+            items: [
+              'Does not develop, construct, or deliver any residential or commercial project on behalf of third-party developers.',
+              'Does not guarantee the completion, delivery, or quality of projects listed on behalf of other developers.',
+              'Is not responsible for any delay, deficiency, or default on the part of the developer or builder.',
+              'Facilitates the connection between prospective buyers and developers and does not act as a party to the sale agreement.',
+            ]
+          },
+          'For projects developed directly by DAA Realty, all statutory RERA obligations apply and will be disclosed accordingly.',
+        ]
+      },
+      {
+        heading: 'No Guarantee of Returns',
+        content: [
+          'Any information provided by DAA Realty regarding expected rental yields, capital appreciation, or investment returns is indicative only and is based on prevailing market conditions.',
+          'Real estate investment is subject to market risks. Past performance does not guarantee future results. Prospective investors are advised to conduct independent due diligence and consult financial advisors before making investment decisions.',
+        ]
+      },
+      {
+        heading: 'Disclaimer on Pricing & Availability',
+        content: [
+          'All prices, payment plans, and availability of listed properties are subject to change without prior notice.',
+          'The pricing displayed on this website is indicative and may not include registration charges, stamp duty, maintenance deposits, GST, or other statutory and incidental charges. The final pricing will be as per the formal allotment letter or agreement for sale.',
+        ]
+      },
+      {
+        heading: 'Floor Plans, Images & Renders',
+        content: [
+          'Images, floor plans, 3D renders, and virtual tours displayed on this website are for representational purposes only. They may not accurately depict the actual product, finishes, fittings, or surroundings.',
+          'Actual specifications may vary from those depicted. All furnishings shown in renders are for illustrative purposes and are not included in the sale unless explicitly stated in the agreement for sale.',
+        ]
+      },
+      {
+        heading: 'UP RERA Compliance',
+        content: [
+          'DAA Realty is committed to full compliance with the Real Estate (Regulation and Development) Act, 2016, and the rules and regulations framed thereunder by the Uttar Pradesh Real Estate Regulatory Authority (UP RERA).',
+          'For grievance redressal relating to any RERA-registered project, buyers may approach:',
+          {
+            type: 'list',
+            items: [
+              'UP RERA Official Portal: www.up-rera.in',
+              'UP RERA Helpline: 0522-2237582',
+              'UP RERA Office: 3rd Floor, Indira Bhawan, Ashok Marg, Lucknow, Uttar Pradesh – 226001',
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Contact for RERA-Related Queries',
+        content: [
+          'If you have any specific questions related to RERA compliance of projects listed by DAA Realty, please contact us directly:',
+          {
+            type: 'list',
+            items: [
+              'Email: daarealty@outlook.com',
+              'Phone: +91-95607 52744 / +91-70117 92465',
+              'Address: B-29, 4th Floor, RDC, Rajnagar, Ghaziabad, Uttar Pradesh – 201002',
+            ]
+          }
+        ]
+      }
+    ]}
+  />
+);
 
 const NewsletterSignup = () => {
   const [email, setEmail] = useState('');
@@ -2596,14 +3031,20 @@ export default function App() {
         <main className="flex-grow">
           <AnimatePresence mode="wait">
             <Routes>
-              <Route path="/" element={IS_ADMIN_SUBDOMAIN ? <Navigate to="/admin" replace /> : <HomePage />} />
-              <Route path="/project/:id" element={<ProjectDetailsPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/services" element={<ServicesPage />} />
-              <Route path="/contact" element={<ContactPage theme={theme} />} />
-              <Route path="/philosophy" element={<PhilosophyPage />} />
-              <Route path="/admin" element={token ? <Navigate to="/admin/dashboard" /> : <AdminLogin setToken={setToken} />} />
-              <Route path="/admin/dashboard" element={token ? <AdminDashboard token={token} logout={logout} /> : <Navigate to="/admin" />} />
+              <Route path="" element={IS_ADMIN_SUBDOMAIN ? <Navigate to="/admin" replace /> : <HomePage />} />
+              <Route path="project/:id" element={<ProjectDetailsPage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="services" element={<ServicesPage />} />
+              <Route path="contact" element={<ContactPage theme={theme} />} />
+              <Route path="philosophy" element={<PhilosophyPage />} />
+
+              {/* ✅ New Legal Pages */}
+              <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="terms-of-service" element={<TermsOfServicePage />} />
+              <Route path="rera-disclaimer" element={<ReraDisclaimerPage />} />
+
+              <Route path="admin" element={token ? <Navigate to="/admin/dashboard" /> : <AdminLogin setToken={setToken} />} />
+              <Route path="admin/dashboard" element={token ? <AdminDashboard token={token} logout={logout} /> : <Navigate to="/admin" />} />
             </Routes>
           </AnimatePresence>
         </main>
