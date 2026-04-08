@@ -245,7 +245,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center py-8 border-t border-border gap-4">
-          <p className="text-stone-400 text-[10px] tracking-wider uppercase font-bold">© 2024 DAA REALTY GROUP ALL RIGHTS RESERVED.</p>
+          <p className="text-stone-400 text-[10px] tracking-wider uppercase font-bold">© 2026 DAA REALTY GROUP ALL RIGHTS RESERVED.</p>
           <div className="flex gap-8">
             {['Privacy Policy', 'Terms of Service', 'Sitemap'].map(item => (
               <Link key={item} to="#" className="text-stone-400 text-[10px] tracking-wider uppercase font-bold hover:text-[#E65E19] transition-colors">{item}</Link>
@@ -1786,27 +1786,27 @@ const ServicesPage = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {listings.map((prop, idx) => (
-              <motion.div
-                key={prop._id || idx}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className="group bg-background rounded-[2.5rem] overflow-hidden border border-border shadow-xl hover:shadow-[#E65E19]/10 transition-all"
-              >
-                <div className="aspect-video relative overflow-hidden">
-                  <img src={getImageUrl(prop.images?.[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={prop.title} />
-                  <div className="absolute top-4 right-4 bg-[#E65E19] text-white px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest">{prop.type}</div>
-                </div>
-                <div className="p-8 space-y-4">
-                  <h3 className="text-lg font-bold uppercase tracking-tight truncate">{prop.title}</h3>
-                  <p className="text-stone-500 text-sm flex items-center gap-2 italic"><MapPin className="w-3 h-3 text-[#E65E19]" /> {prop.location}</p>
-                  <p className="text-stone-400 text-xs line-clamp-2 leading-relaxed">{prop.description}</p>
-                  <div className="flex justify-between items-center pt-4 border-t border-border">
-                    <span className="font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
-                    <Link to="/contact" className="text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-[#E65E19] transition-colors flex items-center gap-2">Details <ArrowRight className="w-3 h-3" /></Link>
+              <Link to={`/project/${prop._id}`} key={prop._id || idx} className="block group">  {/* ✅ Wrap with Link */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-surface rounded-3xl border border-border shadow-xl hover:shadow-[#E65E19]/10 transition-all overflow-hidden cursor-pointer"
+                >
+                  <div className="p-8 space-y-4">
+                    <h3 className="text-lg font-bold uppercase tracking-tight truncate group-hover:text-[#E65E19] transition-colors">{prop.title}</h3>
+                    <p className="text-stone-500 text-sm flex items-center gap-2 italic"><MapPin className="w-3 h-3 text-[#E65E19]" />{prop.location}</p>
+                    <p className="text-stone-400 text-xs line-clamp-2 leading-relaxed">{prop.description}</p>
                   </div>
-                </div>
-              </motion.div>
+                  <div className="flex justify-between items-center px-8 py-4 border-t border-border">
+                    <span className="font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 group-hover:text-[#E65E19] transition-colors flex items-center gap-2">
+                      Details <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
