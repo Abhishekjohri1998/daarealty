@@ -174,83 +174,206 @@ const Navbar = ({ theme, toggleTheme }: { theme: 'light' | 'dark', toggleTheme: 
 };
 
 // --- Footer Component ---
+// --- Footer Component (Redesigned to match reference layout) ---
 const Footer = () => {
   const { pathname } = useLocation();
   if (pathname.startsWith('/admin')) return null;
+
   return (
-    <footer className="bg-background border-t border-border pt-24 pb-12 transition-colors duration-300">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
-          <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#E65E19] rounded-lg flex items-center justify-center font-bold text-white text-sm uppercase">D</div>
-              <div className="flex flex-col text-foreground">
-                <span className="font-serif font-bold text-lg leading-none">DAA</span>
-                <span className="text-[8px] tracking-[0.2em] font-bold uppercase">REALTY</span>
+    <footer className="bg-background border-t border-border transition-colors duration-300">
+      <div className="container mx-auto px-6 py-16">
+        <div className="flex flex-col lg:flex-row gap-12">
+
+          {/* ── LEFT COLUMN: Brand + Social + Newsletter ── */}
+          <div className="lg:w-[320px] shrink-0 space-y-8">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-[#E65E19] rounded-lg flex items-center justify-center font-bold text-white text-lg transition-transform group-hover:rotate-12 uppercase shadow-lg shadow-[#E65E19]/20">
+                D
+              </div>
+              <div className="flex flex-col text-foreground leading-none">
+                <span className="font-serif font-bold text-xl tracking-wide">DAA</span>
+                <span className="text-[9px] tracking-[0.25em] font-bold uppercase text-stone-400">REALTY</span>
               </div>
             </Link>
-            <p className="text-stone-500 dark:text-stone-400 text-[10px] tracking-[0.3em] font-bold uppercase mb-4">
-              Dreams • Aspirations • Achievements
+
+            {/* Tagline */}
+            <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed max-w-xs">
+              Your trusted partner for smart real estate investments and verified property opportunities.
             </p>
-            <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed max-w-xs italic">
-              Building Value. Creating Spaces. Delivering Trust.
-            </p>
-          </div>
-          <div>
-            <h4 className="text-[10px] tracking-[0.2em] font-bold text-stone-400 mb-8 uppercase">Company</h4>
-            <ul className="space-y-4">
-              {['About Us', 'Our Team', 'Careers', 'News'].map(item => (
-                <li key={item}><Link to="/about" className="text-stone-600 dark:text-stone-400 hover:text-[#E65E19] text-sm transition-colors">{item}</Link></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-[10px] tracking-[0.2em] font-bold text-stone-400 mb-8 uppercase">Developments</h4>
-            <ul className="space-y-4">
-              {['Residential Dept', 'Commercial Hub', 'Upcoming Projects', 'Completed Sites'].map(item => (
-                <li key={item}><Link to="#" className="text-stone-600 dark:text-stone-400 hover:text-[#E65E19] text-sm transition-colors">{item}</Link></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-[10px] tracking-[0.2em] font-bold text-stone-400 mb-8 uppercase">Connect</h4>
-            <div className="flex gap-4 mb-10">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Facebook className="w-4 h-4" /></a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border"><Instagram className="w-4 h-4" /></a>
-              <a href="https://wa.me/919560752744" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-foreground hover:bg-[#E65E19] hover:text-white transition-all border border-border">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                </svg>
-              </a>
-            </div>
-            <div className="space-y-4 mb-8">
-              <div className="flex gap-3 items-start">
-                <MapPin className="w-4 h-4 text-[#E65E19] shrink-0 mt-0.5" />
-                <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed">
-                  B-29, 4th floor, RDC, Rajnagar, <br />
-                  Ghaziabad Pincode-201002
-                </p>
-              </div>
-              <div className="flex gap-3 items-center">
-                <Phone className="w-4 h-4 text-[#E65E19] shrink-0" />
-                <p className="text-stone-500 dark:text-stone-400 text-[11px] font-bold tracking-tighter">9560752744 , 7011792465</p>
-              </div>
-              <div className="flex gap-3 items-center">
-                <Mail className="w-4 h-4 text-[#E65E19] shrink-0" />
-                <p className="text-stone-500 dark:text-stone-400 text-[11px]">daarealty@outlook.com</p>
+
+            {/* Stay Connected */}
+            <div className="space-y-4">
+              <p className="text-sm font-bold text-foreground tracking-wide">Stay Connected</p>
+              <div className="flex items-center gap-3">
+                {/* Facebook */}
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:opacity-90 transition-all hover:scale-110 shadow-sm">
+                  <Facebook className="w-4 h-4" />
+                </a>
+                {/* Twitter / X */}
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-black dark:bg-stone-800 flex items-center justify-center text-white hover:opacity-90 transition-all hover:scale-110 shadow-sm border border-stone-200 dark:border-white/10">
+                  <Twitter className="w-4 h-4" />
+                </a>
+                {/* Instagram */}
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-white hover:opacity-90 transition-all hover:scale-110 shadow-sm"
+                  style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)' }}>
+                  <Instagram className="w-4 h-4" />
+                </a>
+                {/* WhatsApp */}
+                <a href="https://wa.me/917011792465" target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-[#25D366] flex items-center justify-center text-white hover:opacity-90 transition-all hover:scale-110 shadow-sm">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                </a>
               </div>
             </div>
-            <p className="text-stone-500 dark:text-stone-400 text-xs mb-4">Sign up for updates</p>
-            <NewsletterSignup />
+
+            {/* Newsletter */}
+            <div className="space-y-3">
+              <p className="text-stone-500 dark:text-stone-400 text-xs uppercase tracking-widest font-bold">Sign up for updates</p>
+              <NewsletterSignup />
+            </div>
+          </div>
+
+          {/* ── VERTICAL DIVIDER ── */}
+          <div className="hidden lg:block w-px bg-border self-stretch mx-4" />
+
+          {/* ── RIGHT COLUMNS ── */}
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+            {/* Column 1: Feel Free to Contact Us */}
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-base font-bold text-foreground mb-1">Feel Free to Contact Us</h4>
+                <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
+              </div>
+              <ul className="space-y-5">
+                <li>
+                  <a href="mailto:daarealty@outlook.com"
+                    className="flex items-start gap-3 group">
+                    <div className="w-8 h-8 rounded-lg bg-[#E65E19]/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Mail className="w-4 h-4 text-[#E65E19]" />
+                    </div>
+                    <span className="text-stone-600 dark:text-stone-400 text-sm group-hover:text-[#E65E19] transition-colors leading-tight pt-1">
+                      daarealty@outlook.com
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+919560752744"
+                    className="flex items-start gap-3 group">
+                    <div className="w-8 h-8 rounded-lg bg-[#E65E19]/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Phone className="w-4 h-4 text-[#E65E19]" />
+                    </div>
+                    <span className="text-stone-600 dark:text-stone-400 text-sm group-hover:text-[#E65E19] transition-colors leading-snug pt-1">
+                      +91-95607 52744<br />+91-70117 92465
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://daarealty.in" target="_blank" rel="noopener noreferrer"
+                    className="flex items-start gap-3 group">
+                    <div className="w-8 h-8 rounded-lg bg-[#E65E19]/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <MapPin className="w-4 h-4 text-[#E65E19]" />
+                    </div>
+                    <span className="text-stone-600 dark:text-stone-400 text-sm group-hover:text-[#E65E19] transition-colors leading-snug pt-1">
+                      B-29, 4th floor, RDC,<br />Rajnagar, Ghaziabad – 201002
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 2: Useful Links */}
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-base font-bold text-foreground mb-1">Useful Links</h4>
+                <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
+              </div>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Home', path: '/' },
+                  { label: 'About Us', path: '/about' },
+                  { label: 'Services', path: '/services' },
+                  { label: 'Our Philosophy', path: '/philosophy' },
+                  { label: 'Contact Us', path: '/contact' },
+                ].map(item => (
+                  <li key={item.label}>
+                    <Link to={item.path}
+                      className="text-stone-600 dark:text-stone-400 text-sm hover:text-[#E65E19] transition-colors flex items-center gap-2 group">
+                      <ChevronRight className="w-3 h-3 text-[#E65E19] opacity-0 group-hover:opacity-100 transition-opacity -ml-1" />
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Column 3: Resources + Legal */}
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-base font-bold text-foreground mb-1">Resources</h4>
+                  <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    { label: 'Residential Projects', path: '/services' },
+                    { label: 'Commercial Projects', path: '/services' },
+                    { label: 'Upcoming Projects', path: '/services' },
+                    { label: 'Completed Sites', path: '/services' },
+                    { label: 'Government Contracts', path: '/about' },
+                  ].map(item => (
+                    <li key={item.label}>
+                      <Link to={item.path}
+                        className="text-stone-600 dark:text-stone-400 text-sm hover:text-[#E65E19] transition-colors flex items-center gap-2 group">
+                        <ChevronRight className="w-3 h-3 text-[#E65E19] opacity-0 group-hover:opacity-100 transition-opacity -ml-1" />
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Legal & Policy */}
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-base font-bold text-foreground mb-1">Legal &amp; Policy</h4>
+                  <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    { label: 'Privacy Policy', path: '#' },
+                    { label: 'Terms of Service', path: '#' },
+                    { label: 'RERA Disclaimer', path: '#' },
+                  ].map(item => (
+                    <li key={item.label}>
+                      <Link to={item.path}
+                        className="text-stone-600 dark:text-stone-400 text-sm hover:text-[#E65E19] transition-colors flex items-center gap-2 group">
+                        <ChevronRight className="w-3 h-3 text-[#E65E19] opacity-0 group-hover:opacity-100 transition-opacity -ml-1" />
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-center py-8 border-t border-border gap-4">
-          <p className="text-stone-400 text-[10px] tracking-wider uppercase font-bold">© 2026 DAA REALTY GROUP ALL RIGHTS RESERVED.</p>
-          <div className="flex gap-8">
-            {['Privacy Policy', 'Terms of Service', 'Sitemap'].map(item => (
-              <Link key={item} to="#" className="text-stone-400 text-[10px] tracking-wider uppercase font-bold hover:text-[#E65E19] transition-colors">{item}</Link>
-            ))}
-          </div>
+
+        {/* ── BOTTOM BAR ── */}
+        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-stone-400 text-[11px] tracking-wider uppercase font-bold">
+            © 2026 DAA Realty Group. All Rights Reserved.
+          </p>
+          <p className="text-stone-400 text-[11px] tracking-wider uppercase font-bold">
+            Dreams • Aspirations • Achievements
+          </p>
         </div>
       </div>
     </footer>
