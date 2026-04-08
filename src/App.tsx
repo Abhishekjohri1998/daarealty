@@ -31,7 +31,8 @@ import {
   Crosshair,
   Map as MapIcon,
   Navigation,
-  ArrowUp
+  ArrowUp,
+  Search, FileText, Award, Home, Banknote, Headphones
 } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -887,60 +888,41 @@ const HomePage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const processSteps = [
+    { label: "Search Property", icon: <Search className="w-6 h-6" />, mobileIcon: <Search className="w-5 h-5" /> },
+    { label: "Submit Your Enquiry", icon: <FileText className="w-6 h-6" />, mobileIcon: <FileText className="w-5 h-5" /> },
+    { label: "Meet Our Expert", icon: <Award className="w-6 h-6" />, mobileIcon: <Award className="w-5 h-5" /> },
+    { label: "Visit Property", icon: <MapPin className="w-6 h-6" />, mobileIcon: <MapPin className="w-5 h-5" /> },
+    { label: "Buy Property", icon: <Home className="w-6 h-6" />, mobileIcon: <Home className="w-5 h-5" /> },
+    { label: "Loan Assistance", icon: <Banknote className="w-6 h-6" />, mobileIcon: <Banknote className="w-5 h-5" /> },
+    { label: "Customer Support", icon: <Headphones className="w-6 h-6" />, mobileIcon: <Headphones className="w-5 h-5" /> },
+  ];
+
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
 
       {/* ── Hero ── */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ y: y1 }} className="absolute inset-0">
-          <img
-            src="/assets/hero_luxury_interior.png"
-            alt="Hero Background"
-            className="w-full h-full object-cover scale-110"
-          />
+          <img src="/assets/hero_luxury_interior.png" alt="Hero Background" className="w-full h-full object-cover scale-110" />
           <div className="absolute inset-0 bg-stone-900/40 dark:bg-[radial-gradient(circle_at_50%_40%,rgba(230,94,25,0.15),#050505_80%)] backdrop-blur-[1px]" />
         </motion.div>
         <div className="container mx-auto px-6 relative z-10 text-center text-white">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-6 md:mb-8 opacity-80"
-          >
+          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-6 md:mb-8 opacity-80">
             Dreams • Aspirations • Achievements
           </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            viewport={{ once: true }}
-            className="text-4xl sm:text-5xl md:text-8xl font-serif font-bold mb-8 md:mb-12 leading-tight flex flex-col items-center"
-          >
+          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} viewport={{ once: true }} className="text-4xl sm:text-5xl md:text-8xl font-serif font-bold mb-8 md:mb-12 leading-tight flex flex-col items-center">
             <span>Building Value.</span>
             <span>Creating Spaces.</span>
             <span className="text-[#E65E19]">Delivering Trust.</span>
           </motion.h1>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4 }}
-            viewport={{ once: true }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link to="/services" className="bg-[#E65E19] text-white px-8 py-4 md:px-10 md:py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase flex items-center justify-center">
-              Our Services
-            </Link>
-            <Link to="/philosophy" className="bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 md:px-10 md:py-5 rounded-md text-xs font-bold tracking-widest uppercase hover:bg-white/20 transition-all text-white flex items-center justify-center">
-              Our Philosophy
-            </Link>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} viewport={{ once: true }} className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/services" className="bg-[#E65E19] text-white px-8 py-4 md:px-10 md:py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase flex items-center justify-center">Our Services</Link>
+            <Link to="/philosophy" className="bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 md:px-10 md:py-5 rounded-md text-xs font-bold tracking-widest uppercase hover:bg-white/20 transition-all text-white flex items-center justify-center">Our Philosophy</Link>
           </motion.div>
         </div>
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-40">
-          <motion.div
-            animate={{ height: [0, 60, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-[1px] bg-gradient-to-b from-transparent to-white"
-          />
+          <motion.div animate={{ height: [0, 60, 0] }} transition={{ duration: 2, repeat: Infinity }} className="w-[1px] bg-gradient-to-b from-transparent to-white" />
         </div>
       </section>
 
@@ -948,20 +930,8 @@ const HomePage = () => {
       <section className="py-16 md:py-28 bg-surface/50">
         <div className="container mx-auto px-6 text-foreground">
           <div className="max-w-3xl mx-auto text-center mb-10 md:mb-16">
-            <motion.h4
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase"
-            >
-              Our Core Pillars
-            </motion.h4>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="text-2xl sm:text-3xl md:text-5xl font-serif font-bold leading-tight uppercase"
-            >
-              Every foundation we lay is built on three essential values.
-            </motion.h2>
+            <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">Our Core Pillars</motion.h4>
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-2xl sm:text-3xl md:text-5xl font-serif font-bold leading-tight uppercase">Every foundation we lay is built on three essential values.</motion.h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
             {[
@@ -969,31 +939,15 @@ const HomePage = () => {
               { title: "Aspirations", icon: <TrendingUp className="w-6 h-6 text-[#E65E19]" />, desc: "Transforming ideas into real spaces and opportunities." },
               { title: "Achievements", icon: <CheckCircle2 className="w-6 h-6 text-[#E65E19]" />, desc: "Delivering projects and investments that stand the test of time." }
             ].map((pillar, idx) => (
-              <motion.div
-                key={pillar.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ y: -8 }}
-                viewport={{ once: true }}
-                className="bg-background p-8 md:p-10 rounded-3xl shadow-xl shadow-border/50 border border-border orange-border-glow"
-              >
-                <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center mb-5">
-                  {pillar.icon}
-                </div>
+              <motion.div key={pillar.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} whileHover={{ y: -8 }} viewport={{ once: true }} className="bg-background p-8 md:p-10 rounded-3xl shadow-xl shadow-border/50 border border-border orange-border-glow">
+                <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center mb-5">{pillar.icon}</div>
                 <h3 className="text-xl md:text-2xl font-serif font-bold mb-3 uppercase tracking-wider">{pillar.title}</h3>
                 <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed">{pillar.desc}</p>
               </motion.div>
             ))}
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="mt-10 md:mt-14 text-center max-w-4xl mx-auto"
-          >
-            <p className="text-stone-500 dark:text-stone-400 text-base md:text-xl font-serif italic leading-relaxed">
-              "From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."
-            </p>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mt-10 md:mt-14 text-center max-w-4xl mx-auto">
+            <p className="text-stone-500 dark:text-stone-400 text-base md:text-xl font-serif italic leading-relaxed">"From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."</p>
           </motion.div>
         </div>
       </section>
@@ -1003,41 +957,22 @@ const HomePage = () => {
         <div className="flex justify-between items-end mb-8 md:mb-12">
           <div className="space-y-2 text-foreground">
             <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] uppercase">Exclusive Portfolio</h4>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">
-              Our Existing Projects
-            </h2>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">Our Existing Projects</h2>
           </div>
-          <Link to="/services" className="text-stone-400 hover:text-[#E65E19] text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 ml-4">
-            View All <ArrowRight className="w-4 h-4" />
-          </Link>
+          <Link to="/services" className="text-stone-400 hover:text-[#E65E19] text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 ml-4">View All <ArrowRight className="w-4 h-4" /></Link>
         </div>
         <div className="flex gap-6 md:gap-8 overflow-x-auto pb-4 snap-x hide-scrollbar">
           {listings.map((prop, idx) => (
-            <Link
-              to={`/project/${prop._id}`}
-              key={prop._id || idx}
-              className="group bg-surface rounded-[2rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-start flex flex-col"
-            >
-              {/* Image */}
+            <Link to={`/project/${prop._id}`} key={prop._id || idx} className="group bg-surface rounded-[2rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-start flex flex-col">
               <div className="aspect-[4/3] relative overflow-hidden flex-shrink-0">
-                <img
-                  src={getImageUrl(prop.images?.[0])}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  alt={prop.title}
-                  loading="lazy"
-                />
+                <img src={getImageUrl(prop.images?.[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={prop.title} loading="lazy" />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-xl">
-                    {prop.type || 'Sell'}
-                  </span>
+                  <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-xl">{prop.type || 'Sell'}</span>
                 </div>
                 <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-surface/60 to-transparent" />
               </div>
-              {/* Content */}
               <div className="p-6 md:p-8 flex flex-col flex-1">
-                <h3 className="text-base md:text-lg font-bold uppercase tracking-tight mb-1.5 group-hover:text-[#E65E19] transition-colors truncate">
-                  {prop.title}
-                </h3>
+                <h3 className="text-base md:text-lg font-bold uppercase tracking-tight mb-1.5 group-hover:text-[#E65E19] transition-colors truncate">{prop.title}</h3>
                 <p className="text-stone-500 dark:text-stone-400 text-xs flex items-center gap-1.5 truncate mb-4">
                   <MapPin className="w-3 h-3 text-[#E65E19] shrink-0" /> {prop.location}
                 </p>
@@ -1058,40 +993,115 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* ── How We Operate ── */}
+      <section className="py-16 md:py-24 bg-surface/40 overflow-hidden">
+        <div className="container mx-auto px-6">
+
+          {/* Header */}
+          <div className="text-center mb-12 md:mb-16">
+            <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-3 uppercase">Our Process</motion.h4>
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold uppercase tracking-tight text-foreground">
+              How We Operate
+            </motion.h2>
+            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-[#E65E19] font-bold tracking-[0.3em] text-xs md:text-sm mt-3 uppercase">
+              360° Framework
+            </motion.p>
+          </div>
+
+          {/* Desktop Timeline */}
+          <div className="hidden md:block relative">
+            {/* Connecting line through dots */}
+            <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E65E19]/30 to-transparent"
+              style={{ top: 'calc(80px + 12px + 24px + 8px)' }} />
+
+            <div className="grid grid-cols-7 gap-3">
+              {processSteps.map((step, idx) => (
+                <motion.div
+                  key={step.label}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.08 }}
+                  viewport={{ once: true }}
+                  className="flex flex-col items-center group cursor-default"
+                >
+                  {/* Speech-bubble icon */}
+                  <div className="relative mb-6">
+                    <div className="w-20 h-20 rounded-2xl border-2 border-border dark:border-stone-700 bg-background flex items-center justify-center text-stone-400 group-hover:text-[#E65E19] group-hover:border-[#E65E19]/50 transition-all duration-300 shadow-md group-hover:shadow-lg group-hover:shadow-[#E65E19]/10">
+                      {step.icon}
+                    </div>
+                    {/* Triangle point */}
+                    <div className="absolute -bottom-[11px] left-1/2 -translate-x-1/2 w-0 h-0
+                      border-l-[9px] border-l-transparent
+                      border-r-[9px] border-r-transparent
+                      border-t-[11px] border-t-border dark:border-t-stone-700
+                      group-hover:border-t-[#E65E19]/50 transition-all duration-300" />
+                    <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-0 h-0
+                      border-l-[8px] border-l-transparent
+                      border-r-[8px] border-r-transparent
+                      border-t-[10px] border-t-background" />
+                  </div>
+
+                  {/* Timeline dot */}
+                  <div className="w-4 h-4 rounded-full bg-[#E65E19] shadow-md shadow-[#E65E19]/40 z-10 ring-2 ring-background group-hover:scale-125 transition-transform duration-300" />
+
+                  {/* Step number + label */}
+                  <span className="text-[9px] font-bold text-[#E65E19] tracking-widest mt-3">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <p className="text-center text-[10px] font-bold uppercase tracking-widest mt-1 leading-tight text-foreground px-1 max-w-[90px]">
+                    {step.label}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Grid */}
+          <div className="md:hidden grid grid-cols-2 gap-3">
+            {processSteps.map((step, idx) => (
+              <motion.div
+                key={step.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.06 }}
+                viewport={{ once: true }}
+                className="bg-background border border-border rounded-2xl p-4 flex items-center gap-3 shadow-sm"
+              >
+                <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center text-[#E65E19] shrink-0 shadow-sm">
+                  {step.mobileIcon}
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[9px] font-bold text-[#E65E19] tracking-widest block">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <p className="text-[10px] font-bold uppercase tracking-tight leading-snug text-foreground truncate">
+                    {step.label}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
       {/* ── Intro / About ── */}
       <section className="py-16 md:py-28 overflow-hidden bg-background text-foreground">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-10 md:gap-16 items-center">
             <div className="lg:w-1/2 relative w-full group">
               <div className="absolute -inset-4 border-2 border-[#E65E19]/20 rounded-3xl translate-x-4 translate-y-4 dark:bg-[#E65E19]/5 blur-sm" />
-              <motion.img
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                src="/assets/skyscraper.png"
-                className="rounded-3xl shadow-2xl relative z-10 w-full aspect-[4/5] object-cover"
-                alt="Skyscraper"
-              />
+              <motion.img initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} src="/assets/skyscraper.png" className="rounded-3xl shadow-2xl relative z-10 w-full aspect-[4/5] object-cover" alt="Skyscraper" />
             </div>
             <div className="lg:w-1/2 space-y-6 md:space-y-8">
               <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <p className="text-stone-500 dark:text-stone-400 text-sm italic uppercase tracking-widest mb-2">Welcome</p>
                 <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">DAA <br />Realty</h2>
               </motion.div>
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="text-stone-500 dark:text-stone-400 leading-relaxed text-base md:text-xl"
-              >
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-base md:text-xl">
                 Welcome to DAA Realty, a company driven by a long-term vision of creating sustainable value through real estate investments, infrastructure development and property solutions.
               </motion.p>
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="text-stone-500 dark:text-stone-400 leading-relaxed text-sm md:text-lg"
-              >
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-sm md:text-lg">
                 With a strong presence in real estate investments and property leasing, DAA Realty focuses on building assets that generate lasting value for communities, investors and businesses.
               </motion.p>
               <Link to="/about" className="inline-flex items-center gap-3 text-[#E65E19] font-bold tracking-[0.2em] text-xs uppercase group">
@@ -1105,24 +1115,12 @@ const HomePage = () => {
       {/* ── CTA Banner ── */}
       <section className="py-14 md:py-20">
         <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="bg-[#4A3F35] dark:dark-gradient rounded-[2rem] md:rounded-[3rem] p-10 sm:p-14 md:p-24 text-center text-white relative overflow-hidden shadow-2xl transition-colors duration-300 border border-white/5"
-          >
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="bg-[#4A3F35] dark:dark-gradient rounded-[2rem] md:rounded-[3rem] p-10 sm:p-14 md:p-24 text-center text-white relative overflow-hidden shadow-2xl transition-colors duration-300 border border-white/5">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#E65E19]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
             <div className="relative z-10 space-y-6 md:space-y-8">
-              <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">
-                Ready to realize your aspirations?
-              </h2>
-              <p className="text-stone-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-                Join the hundreds of families and businesses who have found their foundation with DAA Realty.
-              </p>
-              <Link
-                to="/contact"
-                className="inline-block bg-[#E65E19] text-white px-10 py-4 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase"
-              >
+              <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">Ready to realize your aspirations?</h2>
+              <p className="text-stone-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">Join the hundreds of families and businesses who have found their foundation with DAA Realty.</p>
+              <Link to="/contact" className="inline-block bg-[#E65E19] text-white px-10 py-4 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase">
                 Start Your Journey Today
               </Link>
             </div>
@@ -1131,13 +1129,7 @@ const HomePage = () => {
       </section>
 
       {/* ── WhatsApp Float ── */}
-      <motion.a
-        href="https://wa.me/917011792465"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#20c65a] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95"
-        title="Chat on WhatsApp"
-      >
+      <motion.a href="https://wa.me/917011792465" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#20c65a] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95" title="Chat on WhatsApp">
         <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
         </svg>
@@ -1146,14 +1138,7 @@ const HomePage = () => {
       {/* ── Scroll to Top ── */}
       <AnimatePresence>
         {showScrollTop && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-24 right-6 bg-[#E65E19] hover:bg-[#d14e15] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95"
-            title="Jump to Top"
-          >
+          <motion.button initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="fixed bottom-24 right-6 bg-[#E65E19] hover:bg-[#d14e15] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95" title="Jump to Top">
             <ArrowUp className="w-7 h-7" />
           </motion.button>
         )}
