@@ -33,6 +33,7 @@ import {
   Navigation
 } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
+
 // --- AWS / Deployment Constants ---
 const IS_PROD = !window.location.hostname.includes('localhost');
 const API_BASE_URL = IS_PROD ? 'https://api.daarealty.in' : '';
@@ -44,6 +45,7 @@ const getImageUrl = (url?: string) => {
   if (url.startsWith('/uploads')) return getApiUrl(url);
   return url;
 };
+
 // --- ScrollToTop Component ---
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -52,6 +54,7 @@ const ScrollToTop = () => {
   }, [pathname]);
   return null;
 };
+
 // --- Theme Constants ---
 const THEME_KEY = 'daa_theme_preference';
 const ThemeToggle = ({ theme, toggle }: { theme: 'light' | 'dark', toggle: () => void }) => {
@@ -65,6 +68,7 @@ const ThemeToggle = ({ theme, toggle }: { theme: 'light' | 'dark', toggle: () =>
     </button>
   );
 };
+
 const Navbar = ({ theme, toggleTheme }: { theme: 'light' | 'dark', toggleTheme: () => void }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -167,6 +171,7 @@ const Navbar = ({ theme, toggleTheme }: { theme: 'light' | 'dark', toggleTheme: 
     </>
   );
 };
+
 // --- Footer Component ---
 const Footer = () => {
   const { pathname } = useLocation();
@@ -250,6 +255,7 @@ const Footer = () => {
     </footer>
   );
 };
+
 const NewsletterSignup = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
@@ -299,6 +305,7 @@ const NewsletterSignup = () => {
     </form>
   );
 };
+
 // --- HomePage Component ---
 const HomePage = () => {
   const [content, setContent] = useState<any>({});
@@ -543,6 +550,7 @@ const HomePage = () => {
     </div>
   );
 };
+
 // --- AboutPage Component ---
 const AboutPage = () => {
   const [founderImage, setFounderImage] = useState<string>('/assets/executive_portrait.png');
@@ -745,6 +753,7 @@ const AboutPage = () => {
     </div>
   );
 };
+
 // --- PhilosophyPage Component ---
 const PhilosophyPage = () => {
   return (
@@ -823,6 +832,7 @@ const PhilosophyPage = () => {
     </div>
   );
 };
+
 // --- Admin Components ---
 const AdminLogin = ({ setToken }: { setToken: (t: string) => void }) => {
   const [username, setUsername] = useState('');
@@ -869,6 +879,7 @@ const AdminLogin = ({ setToken }: { setToken: (t: string) => void }) => {
     </div>
   );
 };
+
 // --- Advanced Admin Components ---
 const FileUploader = ({ onUpload, token }: { onUpload: (urls: string[]) => void, token: string }) => {
   const [dragging, setDragging] = useState(false);
@@ -946,6 +957,7 @@ const FileUploader = ({ onUpload, token }: { onUpload: (urls: string[]) => void,
     </div>
   );
 };
+
 const LocationPicker = ({ coordinates, onChange }: { coordinates: { lat: number, lng: number }, onChange: (coords: { lat: number, lng: number }) => void }) => {
   const pickerRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
@@ -1005,6 +1017,7 @@ const LocationPicker = ({ coordinates, onChange }: { coordinates: { lat: number,
     </div>
   );
 };
+
 const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }) => {
   const [listings, setListings] = useState<any[]>([]);
   const [showAdd, setShowAdd] = useState(false);
@@ -1540,15 +1553,45 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                     <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Description *</label>
                     <textarea value={newProp.description} onChange={e => setNewProp({ ...newProp, description: e.target.value })} className="w-full bg-background border border-border p-4 rounded-xl h-28 focus:ring-2 focus:ring-[#E65E19]/20 outline-none text-foreground" placeholder="Full project description..."></textarea>
                   </div>
-                  {/* ── AMENITIES ── */}
+
+                  {/* ── AMENITIES (NEW CHECKBOXES) ── */}
+                  {/* AMENITIES */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Amenities</p>
+                    <p className="text-10px font-bold uppercase tracking-widest text-[#E65E19]">Amenities</p>
                   </div>
                   <div className="col-span-2">
-                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Amenities (one per line)</label>
-                    <textarea value={(newProp.amenities || []).join('\n')} onChange={e => setNewProp({ ...newProp, amenities: e.target.value.split('\n').filter((a: string) => a.trim()) })} className="w-full bg-background border border-border p-4 rounded-xl h-28 focus:ring-2 focus:ring-[#E65E19]/20 outline-none text-foreground" placeholder={"Bank & ATM\nCCTV Security\nClub House\nPower Backup\nKids Play Area\nJogging Track\nParking Security"} />
-                    <p className="text-[10px] text-stone-400 mt-1">Enter each amenity on a new line</p>
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-3 tracking-widest"> Select Amenities </label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-1 bg-background border border-border rounded-xl p-4 max-h-64 overflow-y-auto">
+                      {PREDEFINED_AMENITIES.map((amenity: string) => (
+                        <label key={amenity} className="flex items-center gap-2 cursor-pointer group p-2 rounded-lg hover:bg-surface transition-colors" >
+                          <input
+                            type="checkbox"
+                            checked={newProp.amenities?.includes(amenity) || false}
+                            onChange={(e) => {
+                              const current: string[] = newProp.amenities || [];
+                              if (e.target.checked) {
+                                setNewProp({ ...newProp, amenities: [...current, amenity] });
+                              } else {
+                                setNewProp({ ...newProp, amenities: current.filter((a: string) => a !== amenity) });
+                              }
+                            }}
+                            className="w-4 h-4 rounded shrink-0"
+                            style={{ accentColor: '#E65E19' }}
+                          />
+                          <span className="text-xs font-medium text-foreground group-hover:text-[#E65E19] transition-colors flex items-center gap-1.5 leading-tight">
+                            <span className="text-sm">{getAmenityIcon(amenity)}</span>
+                            {amenity}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    {(newProp.amenities?.length || 0) > 0 && (
+                      <p className="text-10px text-[#E65E19] mt-2 font-bold uppercase tracking-widest">
+                        ✓ {newProp.amenities.length} ameniti{newProp.amenities.length === 1 ? 'y' : 'es'} selected
+                      </p>
+                    )}
                   </div>
+
                   {/* ── FLOOR PLANS ── */}
                   <div className="col-span-2 border-b border-border pb-2 mt-4 mb-2">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#E65E19]">Floor Plans</p>
@@ -1658,6 +1701,7 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
     </div>
   );
 };
+
 const ServicesPage = () => {
   const [listings, setListings] = useState<any[]>([]);
   useEffect(() => {
@@ -1821,6 +1865,7 @@ const ServicesPage = () => {
     </div>
   );
 };
+
 const MapComponent = ({ theme }: { theme: 'light' | 'dark' }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
@@ -1903,6 +1948,7 @@ const MapComponent = ({ theme }: { theme: 'light' | 'dark' }) => {
     </div>
   );
 };
+
 const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', interest: 'Buying Property', message: '' });
   const [status, setStatus] = useState('');
@@ -2085,7 +2131,37 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
   );
 };
 
+// --- Predefined Amenities List ---
+const PREDEFINED_AMENITIES: string[] = [
+  'Bank / ATM',
+  'CCTV Surveillance',
+  '24/7 Security',
+  'Club House',
+  'Earthquake Resistant',
+  'Landscaped Garden',
+  'High-Speed WiFi',
+  'Jogging Track',
+  'Kids Play Area',
+  'Covered Parking',
+  'Power Backup',
+  'Rainwater Harvesting',
+  'Water Supply',
+  'Swimming Pool',
+  'Gymnasium',
+  'Lift / Elevator',
+  'Fire Safety',
+  'Temple / Prayer Hall',
+  'Hospital Nearby',
+  'School Nearby',
+  'Shopping Complex',
+  'Library',
+  'Solar Panels',
+  'Green Building',
+  'Intercom',
+];
+
 const AMENITY_ICONS: Record<string, string> = { 'bank': '🏦', 'atm': '🏦', 'cctv': '📹', 'security': '🔒', 'club': '🏛️', 'earthquake': '🏗️', 'garden': '🌸', 'flower': '🌸', 'wifi': '📶', 'internet': '📶', 'jogging': '🏃', 'strolling': '🏃', 'kids': '🎠', 'play': '🎠', 'parking': '🅿️', 'power': '⚡', 'backup': '⚡', 'rain': '💧', 'water': '💧', 'swimming': '🏊', 'pool': '🏊', 'gym': '💪', 'lift': '🛗', 'elevator': '🛗', 'fire': '🧯', 'temple': '🛕', 'hospital': '🏥', 'school': '🏫', 'shopping': '🛒', 'library': '📚', 'solar': '☀️', 'green': '🌿', 'intercom': '📞', };
+
 const getAmenityIcon = (name: string) => {
   const lower = name.toLowerCase();
   for (const key in AMENITY_ICONS) {
@@ -2093,6 +2169,7 @@ const getAmenityIcon = (name: string) => {
   }
   return '✅';
 };
+
 const ProjectDetailsPage = () => {
   const { id } = useParams();
   const [project, setProject] = useState<any>(null);
@@ -2423,6 +2500,7 @@ const ProjectDetailsPage = () => {
     </div>
   );
 };
+
 // --- App Component ---
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('daa_admin_token') || '');

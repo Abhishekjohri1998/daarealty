@@ -16,7 +16,6 @@ export interface IListing extends Document {
   sqft?: number;
   featured: boolean;
   createdAt: Date;
-  // New fields
   topology?: string;
   propertyStatus?: string;
   superArea?: string;
@@ -50,7 +49,6 @@ const listingSchema = new Schema<IListing>({
   sqft: { type: Number },
   featured: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
-  // New optional fields
   topology: { type: String },
   propertyStatus: { type: String },
   superArea: { type: String },
