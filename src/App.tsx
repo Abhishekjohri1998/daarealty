@@ -882,16 +882,15 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
-    };
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
-      {/* Hero Section */}
+
+      {/* ── Hero ── */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <motion.div style={{ y: y1 }} className="absolute inset-0">
           <img
@@ -906,7 +905,7 @@ const HomePage = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-8 opacity-80"
+            className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-6 md:mb-8 opacity-80"
           >
             Dreams • Aspirations • Achievements
           </motion.p>
@@ -915,7 +914,7 @@ const HomePage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             viewport={{ once: true }}
-            className="text-5xl md:text-8xl font-serif font-bold mb-12 leading-tight flex flex-col items-center"
+            className="text-4xl sm:text-5xl md:text-8xl font-serif font-bold mb-8 md:mb-12 leading-tight flex flex-col items-center"
           >
             <span>Building Value.</span>
             <span>Creating Spaces.</span>
@@ -926,77 +925,125 @@ const HomePage = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
             viewport={{ once: true }}
-            className="flex flex-col md:flex-row gap-6 justify-center"
+            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link to="/services" className="bg-[#E65E19] text-white px-10 py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase flex items-center justify-center">
+            <Link to="/services" className="bg-[#E65E19] text-white px-8 py-4 md:px-10 md:py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase flex items-center justify-center">
               Our Services
             </Link>
-            <Link to="/philosophy" className="bg-white/10 backdrop-blur-md border border-white/20 px-10 py-5 rounded-md text-xs font-bold tracking-widest uppercase hover:bg-white/20 transition-all text-white flex items-center justify-center">
+            <Link to="/philosophy" className="bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 md:px-10 md:py-5 rounded-md text-xs font-bold tracking-widest uppercase hover:bg-white/20 transition-all text-white flex items-center justify-center">
               Our Philosophy
             </Link>
           </motion.div>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-40">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-40">
           <motion.div
-            animate={{ height: [0, 80, 0] }}
+            animate={{ height: [0, 60, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
             className="w-[1px] bg-gradient-to-b from-transparent to-white"
           />
         </div>
       </section>
 
-      {/* Core Pillars Section */}
-      <section className="py-32 bg-surface/50">
+      {/* ── Core Pillars ── */}
+      <section className="py-16 md:py-28 bg-surface/50">
         <div className="container mx-auto px-6 text-foreground">
-          <div className="max-w-3xl mx-auto text-center mb-24">
-            <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-6 uppercase">Our Core Pillars</motion.h4>
-            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-3xl md:text-5xl font-serif font-bold leading-tight uppercase">Every foundation we lay is built on three essential values.</motion.h2>
+          <div className="max-w-3xl mx-auto text-center mb-10 md:mb-16">
+            <motion.h4
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase"
+            >
+              Our Core Pillars
+            </motion.h4>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-2xl sm:text-3xl md:text-5xl font-serif font-bold leading-tight uppercase"
+            >
+              Every foundation we lay is built on three essential values.
+            </motion.h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
             {[
               { title: "Dreams", icon: <Star className="w-6 h-6 text-[#E65E19]" />, desc: "Understanding the aspirations of people and businesses." },
               { title: "Aspirations", icon: <TrendingUp className="w-6 h-6 text-[#E65E19]" />, desc: "Transforming ideas into real spaces and opportunities." },
               { title: "Achievements", icon: <CheckCircle2 className="w-6 h-6 text-[#E65E19]" />, desc: "Delivering projects and investments that stand the test of time." }
             ].map((pillar, idx) => (
-              <motion.div key={pillar.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} whileHover={{ y: -10 }} viewport={{ once: true }} className="bg-background p-12 rounded-3xl shadow-xl shadow-border/50 border border-border orange-border-glow">
-                <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center mb-8">{pillar.icon}</div>
-                <h3 className="text-2xl font-serif font-bold mb-6 uppercase tracking-wider">{pillar.title}</h3>
+              <motion.div
+                key={pillar.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover={{ y: -8 }}
+                viewport={{ once: true }}
+                className="bg-background p-8 md:p-10 rounded-3xl shadow-xl shadow-border/50 border border-border orange-border-glow"
+              >
+                <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center mb-5">
+                  {pillar.icon}
+                </div>
+                <h3 className="text-xl md:text-2xl font-serif font-bold mb-3 uppercase tracking-wider">{pillar.title}</h3>
                 <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed">{pillar.desc}</p>
               </motion.div>
             ))}
           </div>
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mt-16 text-center max-w-4xl mx-auto">
-            <p className="text-stone-500 dark:text-stone-400 text-lg md:text-xl font-serif italic leading-relaxed">"From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="mt-10 md:mt-14 text-center max-w-4xl mx-auto"
+          >
+            <p className="text-stone-500 dark:text-stone-400 text-base md:text-xl font-serif italic leading-relaxed">
+              "From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Featured Properties Section */}
-      <section className="py-32 container mx-auto px-6">
-        <div className="flex justify-between items-end mb-16">
-          <div className="space-y-4 text-foreground">
+      {/* ── Featured Properties ── */}
+      <section className="py-16 md:py-24 container mx-auto px-6">
+        <div className="flex justify-between items-end mb-8 md:mb-12">
+          <div className="space-y-2 text-foreground">
             <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] uppercase">Exclusive Portfolio</h4>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">Our Existing <br className="hidden md:block" /> Projects</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif font-bold uppercase tracking-tight">
+              Our Existing Projects
+            </h2>
           </div>
-          <Link to="/services" className="text-stone-400 hover:text-[#E65E19] text-xs font-bold uppercase tracking-widest transition-all mb-2 flex items-center gap-2">View All <ArrowRight className="w-4 h-4" /></Link>
+          <Link to="/services" className="text-stone-400 hover:text-[#E65E19] text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 ml-4">
+            View All <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
-        <div className="flex gap-10 overflow-x-auto pb-10 snap-x hide-scrollbar">
+        <div className="flex gap-6 md:gap-8 overflow-x-auto pb-4 snap-x hide-scrollbar">
           {listings.map((prop, idx) => (
-            <Link to={`/project/${prop._id}`} key={prop._id || idx} className="group bg-surface rounded-[2.5rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[320px] md:min-w-[400px] snap-start">
-              <div className="aspect-[4/3] relative overflow-hidden">
-                <img src={getImageUrl(prop.images?.[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={prop.title} />
-                <div className="absolute top-6 left-6 flex gap-2">
-                  <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-xl">{prop.type || 'Sell'}</span>
+            <Link
+              to={`/project/${prop._id}`}
+              key={prop._id || idx}
+              className="group bg-surface rounded-[2rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-start flex flex-col"
+            >
+              {/* Image */}
+              <div className="aspect-[4/3] relative overflow-hidden flex-shrink-0">
+                <img
+                  src={getImageUrl(prop.images?.[0])}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  alt={prop.title}
+                  loading="lazy"
+                />
+                <div className="absolute top-4 left-4">
+                  <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-xl">
+                    {prop.type || 'Sell'}
+                  </span>
                 </div>
+                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-surface/60 to-transparent" />
               </div>
-              <div className="p-10 space-y-6 text-foreground">
-                <div>
-                  <h3 className="text-xl font-bold uppercase tracking-tight mb-2 group-hover:text-[#E65E19] transition-colors truncate">{prop.title}</h3>
-                  <p className="text-stone-500 dark:text-stone-400 text-sm flex items-center gap-2 truncate"><MapPin className="w-3 h-3 text-[#E65E19]" /> {prop.location}</p>
-                </div>
-                <div className="flex justify-between items-center pt-6 border-t border-border">
-                  <span className="text-2xl font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
-                  <div className="w-10 h-10 bg-surface border border-border rounded-full flex items-center justify-center text-stone-400 group-hover:bg-[#E65E19] group-hover:text-white transition-all shadow-xl">
+              {/* Content */}
+              <div className="p-6 md:p-8 flex flex-col flex-1">
+                <h3 className="text-base md:text-lg font-bold uppercase tracking-tight mb-1.5 group-hover:text-[#E65E19] transition-colors truncate">
+                  {prop.title}
+                </h3>
+                <p className="text-stone-500 dark:text-stone-400 text-xs flex items-center gap-1.5 truncate mb-4">
+                  <MapPin className="w-3 h-3 text-[#E65E19] shrink-0" /> {prop.location}
+                </p>
+                <div className="flex justify-between items-center pt-4 border-t border-border mt-auto">
+                  <span className="font-serif font-bold text-[#E65E19] text-sm md:text-base">Price on Request</span>
+                  <div className="w-9 h-9 bg-surface border border-border rounded-full flex items-center justify-center text-stone-400 group-hover:bg-[#E65E19] group-hover:text-white transition-all shadow-md">
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -1004,33 +1051,50 @@ const HomePage = () => {
             </Link>
           ))}
           {listings.length === 0 && (
-            <div className="col-span-3 py-20 text-center border-2 border-dashed border-border rounded-[2.5rem] opacity-50">
+            <div className="w-full py-14 text-center border-2 border-dashed border-border rounded-[2rem] opacity-50">
               <p className="text-stone-500 dark:text-stone-400 font-serif italic">Curating exceptional properties... Please check back soon.</p>
             </div>
           )}
         </div>
       </section>
 
-      {/* Intro Section */}
-      <section className="py-32 overflow-hidden bg-background text-foreground">
+      {/* ── Intro / About ── */}
+      <section className="py-16 md:py-28 overflow-hidden bg-background text-foreground">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row gap-20 items-center">
+          <div className="flex flex-col lg:flex-row gap-10 md:gap-16 items-center">
             <div className="lg:w-1/2 relative w-full group">
               <div className="absolute -inset-4 border-2 border-[#E65E19]/20 rounded-3xl translate-x-4 translate-y-4 dark:bg-[#E65E19]/5 blur-sm" />
-              <motion.img initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} src="/assets/skyscraper.png" className="rounded-3xl shadow-2xl relative z-10 w-full aspect-[4/5] object-cover" alt="Skyscraper" />
+              <motion.img
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                src="/assets/skyscraper.png"
+                className="rounded-3xl shadow-2xl relative z-10 w-full aspect-[4/5] object-cover"
+                alt="Skyscraper"
+              />
             </div>
-            <div className="lg:w-1/2 space-y-12">
+            <div className="lg:w-1/2 space-y-6 md:space-y-8">
               <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <p className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg italic uppercase tracking-widest mb-4">Welcome</p>
-                <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">DAA <br />Realty</h2>
+                <p className="text-stone-500 dark:text-stone-400 text-sm italic uppercase tracking-widest mb-2">Welcome</p>
+                <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">DAA <br />Realty</h2>
               </motion.div>
-              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-xl mb-6">
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="text-stone-500 dark:text-stone-400 leading-relaxed text-base md:text-xl"
+              >
                 Welcome to DAA Realty, a company driven by a long-term vision of creating sustainable value through real estate investments, infrastructure development and property solutions.
               </motion.p>
-              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-lg">
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="text-stone-500 dark:text-stone-400 leading-relaxed text-sm md:text-lg"
+              >
                 With a strong presence in real estate investments and property leasing, DAA Realty focuses on building assets that generate lasting value for communities, investors and businesses.
               </motion.p>
-              <Link to="/about" className="inline-flex items-center gap-4 text-[#E65E19] font-bold tracking-[0.2em] text-xs uppercase group">
+              <Link to="/about" className="inline-flex items-center gap-3 text-[#E65E19] font-bold tracking-[0.2em] text-xs uppercase group">
                 Discover Who We Are <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
               </Link>
             </div>
@@ -1038,15 +1102,27 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-32">
+      {/* ── CTA Banner ── */}
+      <section className="py-14 md:py-20">
         <div className="container mx-auto px-6">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="bg-[#4A3F35] dark:dark-gradient rounded-[3rem] p-16 md:p-32 text-center text-white relative overflow-hidden shadow-2xl transition-colors duration-300 border border-white/5">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="bg-[#4A3F35] dark:dark-gradient rounded-[2rem] md:rounded-[3rem] p-10 sm:p-14 md:p-24 text-center text-white relative overflow-hidden shadow-2xl transition-colors duration-300 border border-white/5"
+          >
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#E65E19]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-            <div className="relative z-10 space-y-12">
-              <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">Ready to realize your aspirations?</h2>
-              <p className="text-stone-400 max-w-2xl mx-auto text-lg leading-relaxed">Join the hundreds of families and businesses who have found their foundation with DAA Realty.</p>
-              <Link to="/contact" className="inline-block bg-[#E65E19] text-white px-12 py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase">
+            <div className="relative z-10 space-y-6 md:space-y-8">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">
+                Ready to realize your aspirations?
+              </h2>
+              <p className="text-stone-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
+                Join the hundreds of families and businesses who have found their foundation with DAA Realty.
+              </p>
+              <Link
+                to="/contact"
+                className="inline-block bg-[#E65E19] text-white px-10 py-4 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase"
+              >
                 Start Your Journey Today
               </Link>
             </div>
@@ -1054,8 +1130,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* FLOATING ICONS - Only on Home Page */}
-      {/* WhatsApp */}
+      {/* ── WhatsApp Float ── */}
       <motion.a
         href="https://wa.me/917011792465"
         target="_blank"
@@ -1068,7 +1143,7 @@ const HomePage = () => {
         </svg>
       </motion.a>
 
-      {/* Jump to Top */}
+      {/* ── Scroll to Top ── */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
@@ -1083,6 +1158,7 @@ const HomePage = () => {
           </motion.button>
         )}
       </AnimatePresence>
+
     </div>
   );
 };
@@ -2236,39 +2312,43 @@ const ServicesPage = () => {
   useEffect(() => {
     fetch(getApiUrl('/api/listings')).then(res => res.json()).then(setListings);
   }, []);
+
   return (
     <div className="pt-20 bg-background min-h-screen text-foreground transition-colors duration-300">
+
       {/* Hero Header */}
-      <section className="py-32 relative bg-stone-900 text-white overflow-hidden">
+      <section className="py-20 md:py-32 relative bg-stone-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-40">
           <img src="/assets/hero_luxury_interior.png" className="w-full h-full object-cover" alt="Services Hero" />
         </div>
         <div className="container mx-auto px-6 relative z-10 text-center">
-          <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[#E65E19] text-[10px] tracking-[0.4em] font-bold uppercase mb-6">Our Expertise</motion.h4>
+          <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[#E65E19] text-[10px] tracking-[0.4em] font-bold uppercase mb-4">Our Expertise</motion.h4>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-7xl font-serif font-bold mb-8 uppercase tracking-widest leading-tight"
+            className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-6 uppercase tracking-widest leading-tight"
           >
-            Professional <br className="md:hidden" /> Real Estate Services
+            Professional Real Estate Services
           </motion.h1>
-          <div className="w-24 h-1 bg-[#E65E19] mx-auto rounded-full" />
+          <div className="w-16 md:w-24 h-1 bg-[#E65E19] mx-auto rounded-full" />
         </div>
       </section>
+
       {/* Intro Text */}
-      <section className="py-24 bg-surface/30">
+      <section className="py-12 md:py-16 bg-surface/30">
         <div className="container mx-auto px-6 max-w-3xl text-center">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            className="text-stone-500 dark:text-stone-400 text-xl leading-relaxed italic"
+            className="text-stone-500 dark:text-stone-400 text-base md:text-xl leading-relaxed italic"
           >
             "Our strength lies in combining construction expertise with real estate insight, enabling us to identify opportunities and execute projects efficiently."
           </motion.p>
         </div>
       </section>
-      {/* Services Intermersive List */}
-      <section className="py-32 container mx-auto px-6 space-y-32 md:space-y-64">
+
+      {/* Services Immersive List */}
+      <section className="py-16 md:py-28 container mx-auto px-6 space-y-20 md:space-y-40">
         {[
           {
             title: "Government Contracts",
@@ -2295,7 +2375,7 @@ const ServicesPage = () => {
             features: ["Office Spaces", "Retail Businesses", "Emerging Enterprises"]
           }
         ].map((service, idx) => (
-          <div key={service.title} className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 md:gap-24 items-center`}>
+          <div key={service.title} className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 md:gap-20 items-center`}>
             <motion.div
               initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -2316,105 +2396,116 @@ const ServicesPage = () => {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="w-full md:w-1/2 space-y-8"
+              className="w-full md:w-1/2 space-y-5 md:space-y-8"
             >
-              <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight uppercase tracking-tight">{service.title}</h2>
-              <p className="text-stone-500 dark:text-stone-400 text-lg leading-relaxed">{service.desc}</p>
-              <div className="space-y-4">
+              <h2 className="text-3xl md:text-5xl font-serif font-bold leading-tight uppercase tracking-tight">{service.title}</h2>
+              <p className="text-stone-500 dark:text-stone-400 text-base md:text-lg leading-relaxed">{service.desc}</p>
+              <div className="space-y-3">
                 {service.features.map(feat => (
-                  <div key={feat} className="flex items-center gap-4 text-stone-700 dark:text-stone-300 font-medium italic">
-                    <div className="w-1.5 h-1.5 bg-[#E65E19] rounded-full" />
+                  <div key={feat} className="flex items-center gap-3 text-stone-700 dark:text-stone-300 font-medium italic">
+                    <div className="w-1.5 h-1.5 bg-[#E65E19] rounded-full shrink-0" />
                     <span>{feat}</span>
                   </div>
                 ))}
               </div>
-              <Link to="/contact" className="inline-flex items-center gap-4 bg-[#E65E19] text-white px-10 py-5 rounded-md font-bold tracking-widest text-xs uppercase shadow-xl hover:bg-[#4A3F35] transition-all transform hover:-translate-y-1">
+              <Link to="/contact" className="inline-flex items-center gap-3 bg-[#E65E19] text-white px-8 py-4 rounded-md font-bold tracking-widest text-xs uppercase shadow-xl hover:bg-[#4A3F35] transition-all transform hover:-translate-y-1">
                 Inquire Details <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
           </div>
         ))}
       </section>
+
       {/* Available Properties Section */}
-      <section className="py-32 bg-surface/30">
+      <section className="py-14 md:py-20 bg-surface/30">
         <div className="container mx-auto px-6">
-          <div className="max-w-3xl mb-16">
-            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">Current Opportunities</h4>
-            <h2 className="text-4xl font-serif font-bold uppercase tracking-tight">Active Property <br /> Portfolio</h2>
+          <div className="mb-8 md:mb-12">
+            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-3 uppercase">Current Opportunities</h4>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold uppercase tracking-tight">Active Property Portfolio</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7">
             {listings.map((prop, idx) => (
               <Link to={`/project/${prop._id}`} key={prop._id || idx} className="block group">
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 }}
+                  transition={{ delay: idx * 0.08 }}
                   viewport={{ once: true }}
-                  className="bg-surface rounded-3xl border border-border shadow-xl hover:shadow-[#E65E19]/10 transition-all overflow-hidden cursor-pointer"
+                  className="bg-surface rounded-2xl border border-border shadow-xl hover:shadow-[#E65E19]/10 transition-all overflow-hidden cursor-pointer flex flex-col h-full"
                 >
-
-                  {/* ✅ Property Image — Added */}
-                  <div className="aspect-[4/3] relative overflow-hidden">
+                  {/* Property Image */}
+                  <div className="aspect-[16/10] relative overflow-hidden flex-shrink-0">
                     <img
                       src={getImageUrl(prop.images?.[0])}
                       alt={prop.title}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    {/* Type Badge */}
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-lg">
+                    <div className="absolute top-3 left-3">
+                      <span className="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-foreground shadow-md">
                         {prop.type || 'Sell'}
                       </span>
                     </div>
-                    {/* Gradient overlay at bottom for smooth transition into card body */}
-                    <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-surface to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-surface/60 to-transparent" />
                   </div>
 
-                  {/* Text Content */}
-                  <div className="p-8 space-y-4">
-                    <h3 className="text-lg font-bold uppercase tracking-tight truncate group-hover:text-[#E65E19] transition-colors">
+                  {/* Card Body */}
+                  <div className="flex flex-col flex-1 p-5">
+                    <h3 className="text-sm font-bold uppercase tracking-tight truncate group-hover:text-[#E65E19] transition-colors mb-1.5">
                       {prop.title}
                     </h3>
-                    <p className="text-stone-500 text-sm flex items-center gap-2 italic">
-                      <MapPin className="w-3 h-3 text-[#E65E19]" />
+                    <p className="text-stone-500 text-xs flex items-center gap-1.5 truncate mb-2">
+                      <MapPin className="w-3 h-3 text-[#E65E19] shrink-0" />
                       {prop.location}
                     </p>
-                    <p className="text-stone-400 text-xs line-clamp-2 leading-relaxed">{prop.description}</p>
+                    {prop.description && (
+                      <p className="text-stone-400 text-xs line-clamp-2 leading-relaxed flex-1 min-h-0">
+                        {prop.description}
+                      </p>
+                    )}
                   </div>
 
-                  <div className="flex justify-between items-center px-8 py-4 border-t border-border">
-                    <span className="font-serif font-bold text-[#E65E19] text-lg">Price on Request</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 group-hover:text-[#E65E19] transition-colors flex items-center gap-2">
+                  {/* Card Footer */}
+                  <div className="flex justify-between items-center px-5 py-3 border-t border-border">
+                    <span className="font-serif font-bold text-[#E65E19] text-sm">Price on Request</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 group-hover:text-[#E65E19] transition-colors flex items-center gap-1.5">
                       Details <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>
-
                 </motion.div>
               </Link>
             ))}
+            {listings.length === 0 && (
+              <div className="col-span-full py-14 text-center border-2 border-dashed border-border rounded-2xl opacity-50">
+                <p className="text-stone-500 dark:text-stone-400 font-serif italic">Curating exceptional properties... Please check back soon.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
+
       {/* Final CTA */}
-      <section className="py-32 container mx-auto px-6">
+      <section className="py-14 md:py-20 container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="bg-[#4A3F35] dark:dark-gradient rounded-[3rem] p-16 md:p-32 text-center text-white relative overflow-hidden shadow-2xl border border-white/5"
+          className="bg-[#4A3F35] dark:dark-gradient rounded-[2rem] md:rounded-[3rem] p-10 sm:p-14 md:p-20 text-center text-white relative overflow-hidden shadow-2xl border border-white/5"
         >
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#E65E19]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-          <div className="relative z-10 space-y-10">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight uppercase">Ready to find your oasis?</h2>
-            <p className="text-stone-400 max-w-2xl mx-auto text-lg leading-relaxed mb-8">
+          <div className="relative z-10 space-y-6 md:space-y-8">
+            <h2 className="text-3xl md:text-5xl font-serif font-bold leading-tight uppercase">Ready to find your oasis?</h2>
+            <p className="text-stone-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
               Contact our professional agents today for a curated selection of properties and bespoke services tailored to your vision.
             </p>
-            <Link to="/contact" className="inline-block bg-[#E65E19] text-white px-12 py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/30 uppercase">
+            <Link to="/contact" className="inline-block bg-[#E65E19] text-white px-10 py-4 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/30 uppercase">
               Consult with Our Team
             </Link>
           </div>
         </motion.div>
       </section>
+
     </div>
   );
 };
