@@ -16,6 +16,22 @@ export interface IListing extends Document {
   sqft?: number;
   featured: boolean;
   createdAt: Date;
+  // New fields
+  topology?: string;
+  propertyStatus?: string;
+  superArea?: string;
+  carpetArea?: string;
+  possession?: string;
+  amenities?: string[];
+  floorPlans?: string[];
+  reraNo?: string;
+  reraProjectName?: string;
+  reraQrCode?: string;
+  aboutDeveloper?: string;
+  developerName?: string;
+  faq?: { question: string; answer: string }[];
+  brochureUrl?: string;
+  locationMapUrl?: string;
 }
 
 const listingSchema = new Schema<IListing>({
@@ -23,7 +39,7 @@ const listingSchema = new Schema<IListing>({
   description: { type: String, required: true },
   price: { type: String, required: true },
   location: { type: String, required: true },
-  images: [{ type: String }], // Array of S3/Local URLs
+  images: [{ type: String }],
   coordinates: {
     lat: { type: Number, default: 28.6790 },
     lng: { type: Number, default: 77.4453 }
@@ -34,6 +50,22 @@ const listingSchema = new Schema<IListing>({
   sqft: { type: Number },
   featured: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
+  // New optional fields
+  topology: { type: String },
+  propertyStatus: { type: String },
+  superArea: { type: String },
+  carpetArea: { type: String },
+  possession: { type: String },
+  amenities: [{ type: String }],
+  floorPlans: [{ type: String }],
+  reraNo: { type: String },
+  reraProjectName: { type: String },
+  reraQrCode: { type: String },
+  aboutDeveloper: { type: String },
+  developerName: { type: String },
+  faq: [{ question: { type: String }, answer: { type: String } }],
+  brochureUrl: { type: String },
+  locationMapUrl: { type: String },
 });
 
 export const Listing = mongoose.models.Listing || mongoose.model<IListing>('Listing', listingSchema);
