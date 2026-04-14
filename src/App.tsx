@@ -61,10 +61,13 @@ const ScrollToTop = () => {
 const propertyTypeCoreOptions = [
   { value: "All", label: "All Types" },
   { value: "Sell", label: "For Sale" },
+  { value: "Buy", label: "To Buy" },
   { value: "Flat", label: "Flats / Apartments" },
   { value: "Plot", label: "Plots / Land" },
   { value: "Freehold", label: "Freehold / Villas" }
 ];
+
+const adminPropertyTypeOptions = propertyTypeCoreOptions.filter(opt => opt.value !== "All");
 
 const contactInterestOptions = [
   { value: "Buying Property", label: "Buying Property" },
@@ -2243,14 +2246,14 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
                   <div className="col-span-2">
                     <LocationPicker coordinates={newProp.coordinates} onChange={(coords) => setNewProp({ ...newProp, coordinates: coords })} />
                   </div>
-                  <div>
-                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest">Type</label>
-                    <select value={newProp.type} onChange={e => setNewProp({ ...newProp, type: e.target.value })} className="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground">
-                      <option value="Plot">Plot</option>
-                      <option value="Sell">Sell</option>
-                      <option value="Freehold">Freehold</option>
-                      <option value="Flat">Flat</option>
-                    </select>
+                  <div className="z-[60] relative">
+                    <label className="text-xs font-bold uppercase text-stone-400 block mb-2 tracking-widest z-0 relative">Type</label>
+                    <CustomDropdown
+                      value={newProp.type}
+                      onChange={val => setNewProp({ ...newProp, type: val })}
+                      options={adminPropertyTypeOptions}
+                      triggerClassName="w-full bg-background border border-border p-4 rounded-xl outline-none text-foreground font-semibold"
+                    />
                   </div>
                   <div className="flex items-center gap-4 pt-6">
                     <input type="checkbox" checked={newProp.featured} onChange={e => setNewProp({ ...newProp, featured: e.target.checked })} className="w-6 h-6 rounded border-border text-[#E65E19] cursor-pointer" />
