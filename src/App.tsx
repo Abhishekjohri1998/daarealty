@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import {
   LayoutDashboard,
@@ -55,6 +55,55 @@ const ScrollToTop = () => {
     window.scrollTo(0, 0);
   }, [pathname]);
   return null;
+};
+
+// --- Custom Faux Dropdown Input ---
+const propertyTypeCoreOptions = [
+  { value: "All", label: "All Types" },
+  { value: "Sell", label: "For Sale" },
+  { value: "Flat", label: "Flats / Apartments" },
+  { value: "Plot", label: "Plots / Land" },
+  { value: "Freehold", label: "Freehold / Villas" }
+];
+
+const contactInterestOptions = [
+  { value: "Buying Property", label: "Buying Property" },
+  { value: "Selling Property", label: "Selling Property" },
+  { value: "Leasing Property", label: "Leasing Property" },
+  { value: "Investment Advice", label: "Investment Advice" },
+  { value: "Government Tenders", label: "Government Tenders" }
+];
+
+const CustomDropdown = ({ value, onChange, options, triggerClassName = "", dropdownClassName = "" }: { value: string; onChange: (val: string) => void; options: {value: string; label: string}[]; triggerClassName?: string; dropdownClassName?: string; }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const fn = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false); };
+    document.addEventListener('mousedown', fn);
+    return () => document.removeEventListener('mousedown', fn);
+  }, []);
+  return (
+    <div className="relative w-full" ref={ref}>
+      <div 
+        onClick={() => setIsOpen(!isOpen)} 
+        className={`w-full flex justify-between items-center cursor-pointer select-none ${triggerClassName}`}
+      >
+        <span className="truncate mr-2 outline-none">{options.find(o => o.value === value)?.label || "Select..."}</span>
+        <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-90' : 'rotate-0'} opacity-70 shrink-0`} />
+      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.15 }} className={`absolute top-full left-0 mt-3 min-w-[220px] w-max bg-background border border-border shadow-2xl rounded-2xl overflow-hidden z-[9999] py-2 flex flex-col ${dropdownClassName}`}>
+            {options.map((opt) => (
+              <div key={opt.value} onClick={() => { onChange(opt.value); setIsOpen(false); }} className={`px-5 py-3 text-xs md:text-sm font-bold uppercase tracking-wider cursor-pointer transition-colors border-l-2 ${value === opt.value ? 'bg-[#E65E19]/10 text-[#E65E19] border-[#E65E19]' : 'text-foreground hover:bg-surface hover:text-[#E65E19] border-transparent'}`}>
+                {opt.label}
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 // --- Theme Constants ---
@@ -249,8 +298,8 @@ const Footer = () => {
             {/* Column 1: Feel Free to Contact Us */}
             <div className="space-y-6">
               <div>
-                <h4 className="text-base font-bold text-foreground mb-1">Feel Free to Contact Us</h4>
-                <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
+                <h4 className="text-base font-bold text-foreground mb-1 uppercase tracking-wider">Feel Free to Contact Us</h4>
+                <div className="w-12 h-1 bg-[#E65E19] rounded-full mt-2" />
               </div>
               <ul className="space-y-5">
                 <li>
@@ -292,76 +341,48 @@ const Footer = () => {
             {/* Column 2: Useful Links */}
             <div className="space-y-6">
               <div>
-                <h4 className="text-base font-bold text-foreground mb-1">Useful Links</h4>
-                <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
+                <h4 className="text-base font-bold text-foreground mb-1 uppercase tracking-wider">Useful Links</h4>
+                <div className="w-12 h-1 bg-[#E65E19] rounded-full mt-2" />
               </div>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {[
                   { label: 'Home', path: '/' },
                   { label: 'About Us', path: '/about' },
                   { label: 'Services', path: '/services' },
-                  { label: 'Our Philosophy', path: '/philosophy' },
                   { label: 'Contact Us', path: '/contact' },
                 ].map(item => (
                   <li key={item.label}>
                     <Link to={item.path}
-                      className="text-stone-600 dark:text-stone-400 text-sm hover:text-[#E65E19] transition-colors flex items-center gap-2 group">
-                      <ChevronRight className="w-3 h-3 text-[#E65E19] opacity-0 group-hover:opacity-100 transition-opacity -ml-1" />
-                      {item.label}
+                      className="text-stone-500 text-sm hover:text-[#E65E19] transition-colors flex items-center group relative inline-flex">
+                      <span className="transform transition-transform duration-300 group-hover:translate-x-4">{item.label}</span>
+                      <ChevronRight className="w-4 h-4 text-[#D4AF37] absolute -left-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Column 3: Resources + Legal */}
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-base font-bold text-foreground mb-1">Resources</h4>
-                  <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
-                </div>
-                <ul className="space-y-3">
-                  {[
-                    { label: 'Residential Projects', path: '/services' },
-                    { label: 'Commercial Projects', path: '/services' },
-                    { label: 'Upcoming Projects', path: '/services' },
-                    { label: 'Completed Sites', path: '/services' },
-                    { label: 'Government Contracts', path: '/about' },
-                  ].map(item => (
-                    <li key={item.label}>
-                      <Link to={item.path}
-                        className="text-stone-600 dark:text-stone-400 text-sm hover:text-[#E65E19] transition-colors flex items-center gap-2 group">
-                        <ChevronRight className="w-3 h-3 text-[#E65E19] opacity-0 group-hover:opacity-100 transition-opacity -ml-1" />
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+            {/* Column 3: Legal & Policy */}
+            <div className="space-y-6">
+              <div>
+                <h4 className="text-base font-bold text-foreground mb-1 uppercase tracking-wider">Legal &amp; Policy</h4>
+                <div className="w-12 h-1 bg-[#E65E19] rounded-full mt-2" />
               </div>
-
-              {/* Legal & Policy */}
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-base font-bold text-foreground mb-1">Legal &amp; Policy</h4>
-                  <div className="w-full h-[2px] bg-[#E65E19] rounded-full" />
-                </div>
-                <ul className="space-y-3">
-                  {[
-                    { label: 'Privacy Policy', path: '/privacy-policy' },
-                    { label: 'Terms of Service', path: '/terms-of-service' },
-                    { label: 'RERA Disclaimer', path: '/rera-disclaimer' },
-                  ].map(item => (
-                    <li key={item.label}>
-                      <Link to={item.path}
-                        className="text-stone-600 dark:text-stone-400 text-sm hover:text-[#E65E19] transition-colors flex items-center gap-2 group">
-                        <ChevronRight className="w-3 h-3 text-[#E65E19] opacity-0 group-hover:opacity-100 transition-opacity -ml-1" />
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul className="space-y-4">
+                {[
+                  { label: 'Privacy Policy', path: '/privacy-policy' },
+                  { label: 'Terms of Service', path: '/terms-of-service' },
+                  { label: 'RERA Disclaimer', path: '/rera-disclaimer' },
+                ].map(item => (
+                  <li key={item.label}>
+                    <Link to={item.path}
+                      className="text-stone-500 text-sm hover:text-[#E65E19] transition-colors flex items-center group relative inline-flex">
+                      <span className="transform transition-transform duration-300 group-hover:translate-x-4">{item.label}</span>
+                      <ChevronRight className="w-4 h-4 text-[#D4AF37] absolute -left-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
 
           </div>
@@ -868,24 +889,31 @@ const NewsletterSignup = () => {
 
 // --- HomePage Component (with floating icons added) ---
 const HomePage = () => {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [propertyType, setPropertyType] = useState('All');
   const [content, setContent] = useState<any>({});
   const [listings, setListings] = useState<any[]>([]);
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('q', searchQuery);
+    if (propertyType !== 'All') params.append('type', propertyType);
+    navigate(`/services?${params.toString()}`);
+  };
 
   useEffect(() => {
     fetch(getApiUrl('/api/content')).then(res => res.json()).then(data => {
       const mapped = data.reduce((acc: any, curr: any) => ({ ...acc, [curr.key]: curr.value }), {});
       setContent(mapped);
-    });
-    fetch(getApiUrl('/api/listings')).then(res => res.json()).then(data => setListings(data.filter((l: any) => l.featured)));
-  }, []);
+    }).catch(err => console.error(err));
 
-  useEffect(() => {
-    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    fetch(getApiUrl('/api/listings')).then(res => res.json()).then(data => {
+      setListings(Array.isArray(data) ? data.filter((l: any) => l.featured) : []);
+    }).catch(err => console.error(err));
   }, []);
 
   const processSteps = [
@@ -902,24 +930,65 @@ const HomePage = () => {
     <div className="min-h-screen bg-background transition-colors duration-300">
 
       {/* ── Hero ── */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <motion.div style={{ y: y1 }} className="absolute inset-0">
-          <img src="/assets/hero_luxury_interior.png" alt="Hero Background" className="w-full h-full object-cover scale-110" />
-          <div className="absolute inset-0 bg-stone-900/40 dark:bg-[radial-gradient(circle_at_50%_40%,rgba(230,94,25,0.15),#050505_80%)] backdrop-blur-[1px]" />
-        </motion.div>
-        <div className="container mx-auto px-6 relative z-10 text-center text-white">
-          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-6 md:mb-8 opacity-80">
+      <section className="relative min-h-screen flex items-center justify-center pt-24 pb-12">
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div style={{ y: y1 }} className="absolute inset-0">
+            <img src="/assets/hero_luxury_interior.png" alt="Hero Background" className="w-full h-full object-cover scale-110" />
+            <div className="absolute inset-0 bg-stone-900/40 dark:bg-[radial-gradient(circle_at_50%_40%,rgba(230,94,25,0.15),#050505_80%)] backdrop-blur-[1px]" />
+          </motion.div>
+        </div>
+        <div className="container mx-auto px-6 relative z-10 text-center text-white mt-10 md:mt-16">
+          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-[10px] md:text-xs tracking-[0.4em] font-bold uppercase mb-3 opacity-80">
             Dreams • Aspirations • Achievements
           </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} viewport={{ once: true }} className="text-4xl sm:text-5xl md:text-8xl font-serif font-bold mb-8 md:mb-12 leading-tight flex flex-col items-center">
+          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }} className="text-sm md:text-base tracking-[0.1em] font-medium mb-6 md:mb-8 opacity-90 text-white/90">
+            Real estate investments backed by execution, not just promises
+          </motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} viewport={{ once: true }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-8 md:mb-12 leading-tight flex flex-col items-center">
             <span>Building Value.</span>
-            <span>Creating Spaces.</span>
+            <span>Creating Wealth.</span>
             <span className="text-[#E65E19]">Delivering Trust.</span>
           </motion.h1>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} viewport={{ once: true }} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/services" className="bg-[#E65E19] text-white px-8 py-4 md:px-10 md:py-5 rounded-md font-bold tracking-widest text-xs hover:bg-stone-800 transition-all transform hover:-translate-y-1 shadow-2xl shadow-[#E65E19]/40 uppercase flex items-center justify-center">Our Services</Link>
-            <Link to="/philosophy" className="bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 md:px-10 md:py-5 rounded-md text-xs font-bold tracking-widest uppercase hover:bg-white/20 transition-all text-white flex items-center justify-center">Our Philosophy</Link>
-          </motion.div>
+          <motion.form
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            viewport={{ once: true }}
+            onSubmit={handleSearch}
+            className="flex flex-col md:flex-row max-w-4xl mx-auto bg-white/10 dark:bg-stone-900/50 backdrop-blur-md rounded-2xl md:rounded-full p-2 border border-white/20 shadow-2xl"
+          >
+            {/* Dropdown for Type */}
+            <div className="flex items-center px-6 py-4 md:py-0 border-b md:border-b-0 md:border-r border-white/20 min-w-[200px]">
+              <Briefcase className="w-5 h-5 text-white/70 mr-3 shrink-0" />
+              <CustomDropdown
+                value={propertyType}
+                onChange={setPropertyType}
+                options={propertyTypeCoreOptions}
+                triggerClassName="bg-transparent text-white outline-none w-full text-sm font-bold uppercase tracking-wider"
+                dropdownClassName="!bg-stone-900 !border-white/20 !text-white"
+              />
+            </div>
+
+            {/* Search Input */}
+            <div className="flex items-center flex-1 px-6 py-4 md:py-0">
+              <Search className="w-5 h-5 text-white/70 mr-3 shrink-0" />
+              <input
+                type="text"
+                placeholder="Search by name, location, or area..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent outline-none text-white placeholder-white/50 text-sm font-medium"
+              />
+            </div>
+
+            {/* Search Button */}
+            <button
+              type="submit"
+              className="bg-[#E65E19] text-white px-10 py-4 rounded-xl md:rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#d14e15] transition-all flex items-center justify-center mt-2 md:mt-0 shadow-lg shadow-[#E65E19]/30 shrink-0"
+            >
+              Search
+            </button>
+          </motion.form>
         </div>
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-40">
           <motion.div animate={{ height: [0, 60, 0] }} transition={{ duration: 2, repeat: Infinity }} className="w-[1px] bg-gradient-to-b from-transparent to-white" />
@@ -933,22 +1002,29 @@ const HomePage = () => {
             <motion.h4 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">Our Core Pillars</motion.h4>
             <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-2xl sm:text-3xl md:text-5xl font-serif font-bold leading-tight uppercase">Every foundation we lay is built on three essential values.</motion.h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 max-w-6xl mx-auto">
             {[
               { title: "Dreams", icon: <Star className="w-6 h-6 text-[#E65E19]" />, desc: "Understanding the aspirations of people and businesses." },
               { title: "Aspirations", icon: <TrendingUp className="w-6 h-6 text-[#E65E19]" />, desc: "Transforming ideas into real spaces and opportunities." },
               { title: "Achievements", icon: <CheckCircle2 className="w-6 h-6 text-[#E65E19]" />, desc: "Delivering projects and investments that stand the test of time." }
             ].map((pillar, idx) => (
-              <motion.div key={pillar.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} whileHover={{ y: -8 }} viewport={{ once: true }} className="bg-background p-8 md:p-10 rounded-3xl shadow-xl shadow-border/50 border border-border orange-border-glow">
-                <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center mb-5">{pillar.icon}</div>
-                <h3 className="text-xl md:text-2xl font-serif font-bold mb-3 uppercase tracking-wider">{pillar.title}</h3>
-                <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed">{pillar.desc}</p>
+              <motion.div
+                key={pillar.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-background p-8 md:p-10 rounded-[2rem] shadow-sm border border-border flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] group w-full"
+              >
+                <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#D4AF37]/10 transition-colors">
+                  {/* Clone element to override icon colors dynamically if needed, or just let CSS Cascade if SVG is currentColor. But we keep it simple: */}
+                  <div className="group-hover:text-[#D4AF37] transition-colors">{pillar.icon}</div>
+                </div>
+                <h3 className="text-xl md:text-2xl font-serif font-bold mb-4 uppercase tracking-wider group-hover:text-[#D4AF37] transition-colors">{pillar.title}</h3>
+                <p className="text-stone-500 dark:text-stone-400 text-sm md:text-base leading-relaxed break-words">{pillar.desc}</p>
               </motion.div>
             ))}
           </div>
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="mt-10 md:mt-14 text-center max-w-4xl mx-auto">
-            <p className="text-stone-500 dark:text-stone-400 text-base md:text-xl font-serif italic leading-relaxed">"From residential properties to commercial assets and from infrastructure projects to rental portfolios, we believe in responsible growth and reliable execution."</p>
-          </motion.div>
         </div>
       </section>
 
@@ -963,7 +1039,7 @@ const HomePage = () => {
         </div>
         <div className="flex gap-6 md:gap-8 overflow-x-auto pb-4 snap-x hide-scrollbar">
           {listings.map((prop, idx) => (
-            <Link to={`/project/${prop._id}`} key={prop._id || idx} className="group bg-surface rounded-[2rem] overflow-hidden border border-border shadow-2xl shadow-border/30 hover:shadow-[#E65E19]/10 transition-all min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-start flex flex-col">
+            <Link to={`/project/${prop._id}`} key={prop._id || idx} className="group bg-surface rounded-[2rem] overflow-hidden border border-border transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] shadow-md min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-start flex flex-col text-left">
               <div className="aspect-[4/3] relative overflow-hidden flex-shrink-0">
                 <img src={getImageUrl(prop.images?.[0])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={prop.title} loading="lazy" />
                 <div className="absolute top-4 left-4">
@@ -1018,15 +1094,15 @@ const HomePage = () => {
               {processSteps.map((step, idx) => (
                 <motion.div
                   key={step.label}
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.08 }}
+                  transition={{ delay: idx * 0.2 }}
                   viewport={{ once: true }}
                   className="flex flex-col items-center group cursor-default"
                 >
                   {/* Speech-bubble icon */}
                   <div className="relative mb-6">
-                    <div className="w-20 h-20 rounded-2xl border-2 border-border dark:border-stone-700 bg-background flex items-center justify-center text-stone-400 group-hover:text-[#E65E19] group-hover:border-[#E65E19]/50 transition-all duration-300 shadow-md group-hover:shadow-lg group-hover:shadow-[#E65E19]/10">
+                    <div className="w-20 h-20 rounded-2xl border-2 border-border dark:border-stone-700 bg-background flex items-center justify-center text-stone-400 group-hover:text-[#D4AF37] group-hover:border-[#D4AF37] transition-all duration-300 shadow-sm group-hover:shadow-xl group-hover:-translate-y-1.5">
                       {step.icon}
                     </div>
                     {/* Triangle point */}
@@ -1034,7 +1110,7 @@ const HomePage = () => {
                       border-l-[9px] border-l-transparent
                       border-r-[9px] border-r-transparent
                       border-t-[11px] border-t-border dark:border-t-stone-700
-                      group-hover:border-t-[#E65E19]/50 transition-all duration-300" />
+                      group-hover:border-t-[#D4AF37] transition-all duration-300" />
                     <div className="absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-0 h-0
                       border-l-[8px] border-l-transparent
                       border-r-[8px] border-r-transparent
@@ -1057,24 +1133,24 @@ const HomePage = () => {
           </div>
 
           {/* Mobile Grid */}
-          <div className="md:hidden grid grid-cols-2 gap-3">
+          <div className="md:hidden grid grid-cols-2 gap-3 max-w-md mx-auto">
             {processSteps.map((step, idx) => (
               <motion.div
                 key={step.label}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.06 }}
+                transition={{ delay: idx * 0.15 }}
                 viewport={{ once: true }}
-                className="bg-background border border-border rounded-2xl p-4 flex items-center gap-3 shadow-sm"
+                className="bg-background border border-border rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-2 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md hover:border-[#D4AF37] group w-full"
               >
-                <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center text-[#E65E19] shrink-0 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center text-[#E65E19] group-hover:text-[#D4AF37] group-hover:bg-[#D4AF37]/10 transition-colors shrink-0 shadow-sm">
                   {step.mobileIcon}
                 </div>
-                <div className="min-w-0">
-                  <span className="text-[9px] font-bold text-[#E65E19] tracking-widest block">
+                <div className="min-w-0 w-full">
+                  <span className="text-[9px] font-bold text-[#E65E19] group-hover:text-[#D4AF37] transition-colors tracking-widest block mb-1">
                     {String(idx + 1).padStart(2, '0')}
                   </span>
-                  <p className="text-[10px] font-bold uppercase tracking-tight leading-snug text-foreground truncate">
+                  <p className="text-[10px] font-bold uppercase tracking-tight leading-snug text-foreground break-words group-hover:text-[#D4AF37] transition-colors">
                     {step.label}
                   </p>
                 </div>
@@ -1089,17 +1165,19 @@ const HomePage = () => {
       <section className="py-16 md:py-28 overflow-hidden bg-background text-foreground">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-10 md:gap-16 items-center">
-            <div className="lg:w-1/2 relative w-full group">
-              <div className="absolute -inset-4 border-2 border-[#E65E19]/20 rounded-3xl translate-x-4 translate-y-4 dark:bg-[#E65E19]/5 blur-sm" />
-              <motion.img initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} src="/assets/skyscraper.png" className="rounded-3xl shadow-2xl relative z-10 w-full aspect-[4/5] object-cover" alt="Skyscraper" />
+            <div className="lg:w-5/12 relative w-full group">
+              <div className="absolute -inset-3 border-2 border-[#E65E19]/20 rounded-3xl translate-x-3 translate-y-3 dark:bg-[#E65E19]/5 blur-sm transition-transform group-hover:translate-x-0 group-hover:translate-y-0" />
+              <motion.img initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} src="/assets/skyscraper.png" className="rounded-3xl shadow-xl relative z-10 w-full aspect-[4/3] md:aspect-square lg:aspect-[4/3] object-cover" alt="Skyscraper" />
             </div>
-            <div className="lg:w-1/2 space-y-6 md:space-y-8">
+            <div className="lg:w-7/12 space-y-6 md:space-y-8 lg:pl-6">
               <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <p className="text-stone-500 dark:text-stone-400 text-sm italic uppercase tracking-widest mb-2">Welcome</p>
                 <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">DAA <br />Realty</h2>
               </motion.div>
               <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-base md:text-xl">
-                Welcome to DAA Realty, a company driven by a long-term vision of creating sustainable value through real estate investments, infrastructure development and property solutions.
+                At DAA Realty, we don’t just deal in properties—we create high-potential real estate
+                investments backed by on-ground execution, government project experience, and long-term
+                value creation.
               </motion.p>
               <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-stone-500 dark:text-stone-400 leading-relaxed text-sm md:text-lg">
                 With a strong presence in real estate investments and property leasing, DAA Realty focuses on building assets that generate lasting value for communities, investors and businesses.
@@ -1128,22 +1206,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ── WhatsApp Float ── */}
-      <motion.a href="https://wa.me/917011792465" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#20c65a] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95" title="Chat on WhatsApp">
-        <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-        </svg>
-      </motion.a>
-
-      {/* ── Scroll to Top ── */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.button initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="fixed bottom-24 right-6 bg-[#E65E19] hover:bg-[#d14e15] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95" title="Jump to Top">
-            <ArrowUp className="w-7 h-7" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
     </div>
   );
 };
@@ -1169,92 +1231,176 @@ const AboutPage = () => {
           className="text-4xl md:text-7xl font-serif font-bold leading-tight mb-8"
         >
           Building Value. <br />
-          <span className="text-[#E65E19]">Creating Spaces.</span> Delivering Trust.
+          <span className="text-[#E65E19]">Creating Wealth.</span> Delivering Trust.
         </motion.h1>
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
+          {[
+            {
+              title: "Strategic Advisory",
+              desc: "A forward-thinking real estate investment and advisory firm with roots in construction & asset management."
+            },
+            {
+              title: "Execution Driven",
+              desc: "From infrastructure to development projects, we bring practical, execution-driven experience to investing."
+            },
+            {
+              title: "Value Creation",
+              desc: "Ensuring every opportunity is backed by real, tangible value rather than just promises."
+            }
+          ].map((point, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + idx * 0.1 }}
+              viewport={{ once: true }}
+              className="bg-surface border border-border p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-[#E65E19]/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-125" />
+              <div className="w-10 h-10 rounded-xl bg-[#E65E19]/10 flex items-center justify-center mb-5 text-[#E65E19]">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-foreground font-bold text-lg md:text-xl mb-3">{point.title}</h3>
+              <p className="text-stone-500 text-sm md:text-base leading-relaxed">{point.desc}</p>
+            </motion.div>
+          ))}
+        </div>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-stone-500 max-w-3xl mx-auto text-lg leading-relaxed mb-12"
+          transition={{ delay: 0.6 }}
+          viewport={{ once: true }}
+          className="text-stone-500 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed mb-12 font-serif italic"
         >
-          DAA Realty is a diversified real estate and infrastructure enterprise engaged in property investments, government contracts and leasing solutions across residential and commercial sectors.
+          "We believe real estate is not just about buildings—it is about creating spaces where people live, work, and grow."
         </motion.p>
         <div className="w-24 h-1.5 bg-[#E65E19] mx-auto rounded-full" />
       </section>
-      {/* About Us Detail */}
-      <section className="py-24 container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row items-center gap-20">
-          <div className="lg:w-1/2 space-y-12">
-            <div>
-              <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">The Foundation</h4>
-              <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase">About Us</h2>
-            </div>
-            <p className="text-stone-500 text-lg leading-relaxed">
-              The company is built on a foundation of experience, integrity and strategic vision. Our activities range from participating in public infrastructure projects to developing and managing real estate assets for long-term value creation.
-            </p>
-            <p className="text-stone-500 text-lg leading-relaxed">
-              We believe real estate is not just about buildings—it is about creating spaces where people live, work, and grow.
-            </p>
-            <p className="text-stone-500 text-lg leading-relaxed">
-              Through disciplined investments and responsible development, DAA Realty aims to build a portfolio of assets that contribute to economic growth and community development.
-            </p>
-          </div>
-          <div className="lg:w-1/2 relative group">
-            <div className="absolute -inset-10 bg-[#FDF8F5] rounded-full scale-0 group-hover:scale-100 transition-transform duration-1000 blur-3xl opacity-50" />
-            <motion.img
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              src={founderImage}
-              className="rounded-[3rem] shadow-2xl relative z-10 w-full object-cover aspect-square grayscale-[20%] hover:grayscale-0 transition-all duration-700"
-              alt="Executive Management"
-            />
-          </div>
-        </div>
-      </section>
-      {/* Who We Are */}
+
+      {/* What Makes Us Different */}
       <section className="py-24 bg-surface/50">
         <div className="container mx-auto px-6">
-          <div className="max-w-4xl">
-            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-6 uppercase">Our Expertise</h4>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase mb-12">Who We Are</h2>
-            <p className="text-stone-500 text-lg leading-relaxed mb-12 italic">
-              DAA Realty represents a commitment to excellence in real estate and infrastructure development.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {[
-                { title: "Government Contracts", desc: "Participation in infrastructure and public works through government tenders." },
-                { title: "Real Estate Investments", desc: "Strategic acquisition and development of land and property assets." },
-                { title: "Residential Leasing", desc: "Providing quality rental spaces for families and individuals." },
-                { title: "Commercial Leasing", desc: "Offering spaces suited for offices, retail businesses and emerging enterprises." }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-6 items-start">
-                  <div className="w-10 h-10 bg-[#E65E19] text-white flex items-center justify-center rounded-lg font-bold shrink-0 shadow-lg">•</div>
-                  <div>
-                    <h3 className="text-xl font-bold uppercase tracking-tight mb-2">{item.title}</h3>
-                    <p className="text-stone-500 text-sm leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-16 space-y-6">
-              <p className="text-stone-500 text-lg leading-relaxed">
+
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">Why Choose Us</h4>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold leading-tight uppercase mb-8">What Makes Us Different</h2>
+            <div className="space-y-6 text-stone-500 text-lg md:text-xl leading-relaxed">
+              <p>
                 Our strength lies in combining construction expertise with real estate insight, enabling us to identify opportunities and execute projects efficiently.
               </p>
-              <p className="text-stone-500 text-lg leading-relaxed">
+              <p>
                 At DAA Realty, every project reflects our commitment to quality, transparency and long-term value creation.
               </p>
             </div>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-5xl mx-auto">
+            {[
+              { title: "Execution Background", desc: "Not just advisors, we understand construction from the ground up." },
+              { title: "Investment-First Approach", desc: "Focused on returns, not just transactions." },
+              { title: "Dual Expertise", desc: "Residential + Commercial + Leasing." },
+              { title: "Long-Term Association", desc: "We stay beyond the deal." }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-background border border-border p-8 md:p-10 rounded-2xl flex flex-col sm:flex-row gap-6 items-start shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] group"
+              >
+                <div className="w-12 h-12 bg-[#E65E19]/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#D4AF37]/10 transition-colors">
+                  <div className="w-3 h-3 rounded-full bg-[#E65E19] group-hover:bg-[#D4AF37] transition-colors" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold uppercase tracking-tight mb-3 text-foreground group-hover:text-[#D4AF37] transition-colors">{item.title}</h3>
+                  <p className="text-stone-500 leading-relaxed text-sm md:text-base">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="max-w-4xl mx-auto text-center text-stone-500 text-lg leading-relaxed space-y-6 mb-24">
+            <p>
+              Choosing the right real estate partner can significantly enhance your investment journey. With expert guidance from experienced property advisors, you gain access to valuable insights on emerging opportunities, high-growth locations, and assets that offer strong long-term returns.
+            </p>
+            <p>
+              If you are looking for a reliable and professional real estate advisory firm in India, DAA Realty stands as a trusted name. As a leading real estate consulting company in Noida, we are committed to delivering tailored solutions that align with your investment goals.
+            </p>
+          </div>
+
+          {/* Our Core Services */}
+          <div className="mb-24 text-center">
+            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">What We Do</h4>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight uppercase mb-12">Our Core Services</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-6xl mx-auto">
+              {[
+                {
+                  title: "1. Consultancy Services",
+                  desc: "Our team of experienced consultants provides in-depth market analysis and strategic advice to help you make informed property decisions. We assess current trends and guide you toward investments that match your financial objectives."
+                },
+                {
+                  title: "2. Advisory & Valuation",
+                  desc: "We offer comprehensive advisory services covering both tangible and intangible asset valuation. Whether you are buying, selling, or restructuring investments, our experts ensure accurate assessments and data-driven recommendations."
+                },
+                {
+                  title: "3. Sales & Leasing Support",
+                  desc: "From identifying the right property to closing transactions, we assist you throughout the sales and leasing process. Our insights help you evaluate opportunities that can deliver consistent and profitable returns."
+                },
+                {
+                  title: "4. Asset Management Solutions",
+                  desc: "We help you optimize your real estate portfolio by identifying opportunities across residential and commercial segments. Our approach is aligned with market dynamics to ensure efficient asset utilization and growth."
+                }
+              ].map((service, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                  className="bg-background border border-border p-8 md:p-12 rounded-[2rem] shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] group relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#E65E19]/5 rounded-bl-[4rem] -mr-10 -mt-10 group-hover:bg-[#D4AF37]/10 transition-colors pointer-events-none" />
+                  <h3 className="text-2xl font-serif font-bold mb-4 uppercase text-foreground group-hover:text-[#D4AF37] transition-colors relative z-10">{service.title}</h3>
+                  <p className="text-stone-500 leading-relaxed text-sm md:text-base relative z-10">{service.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* What Sets Us Apart */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="max-w-5xl mx-auto bg-surface border border-border p-10 md:p-16 rounded-[3rem] shadow-lg relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-[#D4AF37] hover:-translate-y-2 group text-center"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#E65E19]/5 rounded-bl-[6rem] -mr-20 -mt-20 group-hover:bg-[#D4AF37]/5 transition-colors pointer-events-none" />
+            <h2 className="text-3xl md:text-5xl font-serif font-bold leading-tight uppercase mb-10 text-foreground group-hover:text-[#D4AF37] transition-colors">What Sets Us Apart</h2>
+            <div className="space-y-6 text-stone-500 text-lg leading-relaxed relative z-10">
+              <p>
+                At DAA Realty, we believe in delivering complete, end-to-end solutions. You share your requirements, and we take care of everything—from property selection to final execution.
+              </p>
+              <p>
+                Our team ensures transparency, reliable guidance, and continuous support, so your investment remains secure and well-managed. We assist not only in property transactions but also in financial planning related to real estate expansion.
+              </p>
+              <p>
+                With a client-first approach, we stay with you at every stage—until your expectations are fully met. You can explore a wide range of verified residential and commercial options through our platform and choose what best suits your needs.
+              </p>
+            </div>
+          </motion.div>
+
         </div>
       </section>
       {/* Vision & Mission Cards */}
       <section className="py-24 bg-surface/30">
-        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl">
           {[
             {
               title: "Our Vision",
               icon: <Star className="w-8 h-8 text-[#E65E19]" />,
-              desc: "To become a trusted and respected real estate enterprise known for responsible investments, quality infrastructure development and sustainable asset creation. We aim to build a portfolio that not only generates value but also contributes positively to communities and urban development."
+              desc: "To become a trusted real estate investment partner known for creating sustainable wealth through strategic property investments and execution excellence. We aim to build a portfolio that not only generates value but also contributes positively to communities and urban development."
             },
             {
               title: "Our Mission",
@@ -1267,20 +1413,24 @@ const AboutPage = () => {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.2 }}
-              className="bg-background p-16 rounded-[3rem] shadow-xl border border-border flex flex-col gap-8"
+              className="bg-background p-10 md:p-16 rounded-[3rem] shadow-sm border border-border flex flex-col items-center text-center gap-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] group w-full mx-auto"
             >
-              <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center">{card.icon}</div>
-              <h3 className="text-3xl font-serif font-bold leading-tight uppercase">{card.title}</h3>
-              <p className="text-stone-500 leading-relaxed">{card.desc}</p>
+              <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center group-hover:bg-[#D4AF37]/10 transition-colors">
+                {/* Clone override context wrapper */}
+                <div className="group-hover:text-[#D4AF37] transition-colors">{card.icon}</div>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-serif font-bold leading-tight uppercase group-hover:text-[#D4AF37] transition-colors">{card.title}</h3>
+              <p className="text-stone-500 leading-relaxed text-sm md:text-base break-words">{card.desc}</p>
               {card.title === "Our Mission" && (
-                <ul className="space-y-3">
+                <ul className="space-y-3 mt-4 text-left w-full inline-block">
                   {[
-                    "To create reliable real estate assets through strategic investments.",
-                    "To participate in infrastructure development through government projects with integrity and professionalism.",
-                    "To provide quality residential and commercial spaces for modern living and business needs.",
-                    "To build long-term relationships based on trust, transparency and consistent delivery."
+                    "To identify and deliver high-growth real estate opportunities",
+                    "To ensure transparency and security in every transaction",
+                    "To create reliable real estate assets through strategic investments",
+                    "To combine advisory with real execution capabilities",
+                    "To build long-term value for our investors and partners"
                   ].map(m => (
-                    <li key={m} className="flex gap-2 text-sm text-stone-500"><span className="text-[#E65E19]">•</span> {m}</li>
+                    <li key={m} className="flex gap-2 text-sm text-stone-500"><span className="text-[#E65E19] group-hover:text-[#D4AF37] transition-colors">•</span> {m}</li>
                   ))}
                 </ul>
               )}
@@ -1761,10 +1911,10 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
   return (
     <div className="min-h-screen bg-background flex transition-colors duration-300">
       <aside className="w-64 bg-stone-900 text-white p-8 flex flex-col gap-8 hidden md:flex border-r border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#E65E19] rounded-xl flex items-center justify-center font-bold uppercase">D</div>
-          <span className="font-serif font-bold text-xl uppercase tracking-widest">DAA Realty</span>
-        </div>
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-[#E65E19] rounded-xl flex items-center justify-center font-bold uppercase transition-transform group-hover:scale-105">D</div>
+          <span className="font-serif font-bold text-xl uppercase tracking-widest group-hover:text-[#E65E19] transition-colors">DAA Realty</span>
+        </Link>
         <nav className="flex-grow space-y-2">
           <button
             onClick={() => setActiveTab('dashboard')}
@@ -2293,10 +2443,53 @@ const AdminDashboard = ({ token, logout }: { token: string, logout: () => void }
 };
 
 const ServicesPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const rawQ = searchParams.get('q') || '';
+  const rawType = searchParams.get('type') || 'All';
+
   const [listings, setListings] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState(rawQ);
+  const [propertyType, setPropertyType] = useState(rawType);
+
   useEffect(() => {
     fetch(getApiUrl('/api/listings')).then(res => res.json()).then(setListings);
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('q', searchQuery);
+    if (propertyType !== 'All') params.append('type', propertyType);
+    setSearchParams(params);
+  };
+
+  useEffect(() => {
+    setSearchQuery(searchParams.get('q') || '');
+    setPropertyType(searchParams.get('type') || 'All');
+
+    // Auto-scroll to portfolio if a search filter is active
+    if (searchParams.get('q') || (searchParams.get('type') && searchParams.get('type') !== 'All')) {
+      setTimeout(() => {
+        const el = document.getElementById('portfolio');
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 100; // 100px offset for fixed navbar
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }, 300);
+    }
+  }, [searchParams]);
+
+  const filteredListings = listings.filter(prop => {
+    const activeType = propertyType || 'All';
+    const typeMatch = activeType === 'All' || (prop.type && prop.type.toLowerCase() === activeType.toLowerCase());
+    const query = (searchQuery || '').toLowerCase();
+    const qMatch = !query ||
+      (prop.title && prop.title.toLowerCase().includes(query)) ||
+      (prop.location && prop.location.toLowerCase().includes(query)) ||
+      (prop.description && prop.description.toLowerCase().includes(query));
+
+    return typeMatch && qMatch;
+  });
 
   return (
     <div className="pt-20 bg-background min-h-screen text-foreground transition-colors duration-300">
@@ -2319,98 +2512,204 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* Intro Text */}
-      <section className="py-12 md:py-16 bg-surface/30">
-        <div className="container mx-auto px-6 max-w-3xl text-center">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-stone-500 dark:text-stone-400 text-base md:text-xl leading-relaxed italic"
-          >
-            "Our strength lies in combining construction expertise with real estate insight, enabling us to identify opportunities and execute projects efficiently."
-          </motion.p>
+      {/* Services Timeline Sequence */}
+      <section className="py-24 md:py-32 bg-surface/30 relative overflow-hidden">
+        <div className="container mx-auto px-6 relative max-w-5xl">
+          {/* Animated Connecting Line */}
+          <div className="absolute left-[2.25rem] md:left-1/2 top-4 bottom-4 w-1 bg-border md:-translate-x-1/2 rounded-full hidden sm:block">
+             <motion.div 
+               initial={{ height: 0 }} 
+               whileInView={{ height: "100%" }} 
+               transition={{ duration: 1.5, ease: "easeInOut" }} 
+               className="w-full bg-[#D4AF37] transform origin-top rounded-full" 
+             />
+          </div>
+
+          <div className="space-y-16 md:space-y-24 relative z-10">
+            {[
+              {
+                title: "1. Real Estate Investment Advisory",
+                icon: <TrendingUp className="w-6 h-6" />,
+                desc: "We help you identify properties with strong appreciation and rental potential based on real market data and future growth indicators."
+              },
+              {
+                title: "2. Property Acquisition & Sales",
+                icon: <MapPin className="w-6 h-6" />,
+                desc: "From sourcing the right property to closing the deal, we handle the complete buying and selling process with clarity and precision."
+              },
+              {
+                title: "3. Leasing & Rental Solutions",
+                icon: <Home className="w-6 h-6" />,
+                desc: "We assist in generating consistent income through:",
+                bullets: ["Residential leasing", "Commercial rentals", "Long-term tenant management"]
+              },
+              {
+                title: "4. Asset Management",
+                icon: <Briefcase className="w-6 h-6" />,
+                desc: "Your property is treated like an investment portfolio:",
+                bullets: ["Performance tracking", "Tenant management", "Value enhancement strategies"]
+              },
+              {
+                title: "5. Construction & Project Execution",
+                icon: <CheckCircle2 className="w-6 h-6" />,
+                desc: "Backed by our experience in government tenders and civil projects, we bring:",
+                bullets: ["Cost efficiency", "Quality control", "Timely execution"]
+              }
+            ].map((item, idx) => (
+              <div key={idx} className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-8 md:gap-16 group relative ${idx % 2 !== 0 ? 'sm:flex-row-reverse' : ''}`}>
+                
+                {/* Node Box */}
+                <motion.div 
+                  initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }} 
+                  whileInView={{ opacity: 1, x: 0 }} 
+                  transition={{ delay: 0.2 + (idx * 0.1) }} 
+                  viewport={{ once: true }}
+                  className={`w-full sm:w-[calc(50%-2rem)] md:w-[calc(50%-3rem)] ${idx % 2 !== 0 ? 'text-left sm:text-left' : 'text-left sm:text-right'} bg-background p-8 md:p-10 rounded-[2rem] shadow-sm border border-border transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] z-10 relative`}
+                >
+                   <h3 className="text-xl md:text-2xl font-serif font-bold uppercase mb-4 group-hover:text-[#D4AF37] transition-colors">{item.title}</h3>
+                   <p className="text-stone-500 text-sm md:text-base leading-relaxed break-words">{item.desc}</p>
+                   {item.bullets && (
+                     <ul className={`mt-5 space-y-3 flex flex-col ${idx % 2 !== 0 ? 'items-start' : 'items-start sm:items-end'}`}>
+                        {item.bullets.map(b => (
+                          <li key={b} className={`flex items-center gap-3 text-stone-500 text-sm font-medium ${idx % 2 !== 0 ? 'flex-row' : 'flex-row sm:flex-row-reverse'}`}>
+                                 <div className="w-2 h-2 rounded-full bg-[#E65E19] group-hover:bg-[#D4AF37] transition-colors shrink-0" />
+                                 <span className={idx % 2 !== 0 ? 'text-left' : 'text-left sm:text-right'}>{b}</span>
+                          </li>
+                        ))}
+                     </ul>
+                   )}
+                </motion.div>
+
+                {/* Center Icon */}
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: idx * 0.2, type: "spring" }}
+                  viewport={{ once: true }}
+                  className="hidden sm:flex w-16 h-16 bg-background border-4 border-surface items-center justify-center rounded-2xl absolute left-1/2 transform -translate-x-1/2 shadow-xl z-20 group-hover:border-[#D4AF37] transition-colors"
+                >
+                  <div className="text-[#E65E19] group-hover:text-[#D4AF37] transition-colors">{item.icon}</div>
+                </motion.div>
+                
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Services Immersive List */}
-      <section className="py-16 md:py-28 container mx-auto px-6 space-y-20 md:space-y-40">
-        {[
-          {
-            title: "Government Contracts",
-            img: "/assets/service_government.png",
-            desc: "Participation in infrastructure and public works through government tenders.",
-            features: ["Infrastructure Development", "Public Works", "Tender Execution"]
-          },
-          {
-            title: "Real Estate Investments",
-            img: "/assets/service_investment.png",
-            desc: "Strategic acquisition and development of land and property assets.",
-            features: ["Strategic Acquisition", "Land Development", "Property Assets"]
-          },
-          {
-            title: "Residential Leasing",
-            img: "/assets/service_residential.png",
-            desc: "Providing quality rental spaces for families and individuals.",
-            features: ["Quality Spaces", "Family Rentals", "Individual Housing"]
-          },
-          {
-            title: "Commercial Leasing",
-            img: "/assets/service_commercial.png",
-            desc: "Offering spaces suited for offices, retail businesses and emerging enterprises.",
-            features: ["Office Spaces", "Retail Businesses", "Emerging Enterprises"]
-          }
-        ].map((service, idx) => (
-          <div key={service.title} className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 md:gap-20 items-center`}>
-            <motion.div
-              initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="w-full md:w-1/2 relative group"
-            >
-              <div className="absolute -inset-4 border border-[#E65E19]/10 rounded-2xl transform translate-x-4 translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
-              <div className="relative overflow-hidden rounded-2xl aspect-[4/3] shadow-2xl">
-                <img
-                  src={service.img}
-                  alt={service.title}
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-500" />
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="w-full md:w-1/2 space-y-5 md:space-y-8"
-            >
-              <h2 className="text-3xl md:text-5xl font-serif font-bold leading-tight uppercase tracking-tight">{service.title}</h2>
-              <p className="text-stone-500 dark:text-stone-400 text-base md:text-lg leading-relaxed">{service.desc}</p>
-              <div className="space-y-3">
-                {service.features.map(feat => (
-                  <div key={feat} className="flex items-center gap-3 text-stone-700 dark:text-stone-300 font-medium italic">
-                    <div className="w-1.5 h-1.5 bg-[#E65E19] rounded-full shrink-0" />
-                    <span>{feat}</span>
-                  </div>
-                ))}
-              </div>
-              <Link to="/contact" className="inline-flex items-center gap-3 bg-[#E65E19] text-white px-8 py-4 rounded-md font-bold tracking-widest text-xs uppercase shadow-xl hover:bg-[#4A3F35] transition-all transform hover:-translate-y-1">
-                Inquire Details <ArrowRight className="w-4 h-4" />
-              </Link>
-            </motion.div>
+      {/* WHAT WE DO */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="text-center mb-16">
+            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-4 uppercase">What We Do</h4>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold uppercase leading-tight mb-8">At DAA Realty, we offer end-to-end real estate solutions.</h2>
+            <p className="text-stone-500 md:text-xl text-lg italic max-w-2xl mx-auto">
+              You bring the requirement—we deliver the outcome.
+            </p>
           </div>
-        ))}
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="bg-surface/50 p-10 md:p-14 rounded-[3rem] shadow-sm border border-border mx-auto flex flex-col items-center mb-24 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] group w-full text-center"
+          >
+              <p className="text-stone-500 mb-10 max-w-2xl mx-auto text-base md:text-lg">
+                From identifying the right investment to managing and monetizing it, we ensure:
+              </p>
+              <div className="flex justify-center gap-4 md:gap-8 flex-wrap mb-10">
+                 {["Smart decision-making", "Secure investments", "Long-term growth"].map(point => (
+                    <div key={point} className="flex items-center gap-2 font-bold uppercase tracking-widest text-[#E65E19] text-[10px] sm:text-xs md:text-sm group-hover:text-[#D4AF37] transition-colors bg-background px-6 py-3 rounded-full border border-border">
+                      <Star className="w-3 h-3 md:w-4 md:h-4 shrink-0" /> {point}
+                    </div>
+                 ))}
+              </div>
+              <p className="text-stone-500 max-w-2xl mx-auto text-sm md:text-lg leading-relaxed break-words font-medium">
+                We specialize in creating opportunities where your investment not only grows in value but also generates steady income.
+              </p>
+          </motion.div>
+
+          <div className="text-center mb-12">
+            <h3 className="text-xl md:text-2xl font-serif font-bold uppercase tracking-widest text-[#E65E19]">Our Work Spans Across</h3>
+            <div className="w-12 h-1 bg-[#E65E19] mx-auto mt-4 rounded-full" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+            {[
+              { title: "Government Contracts", desc: "Participation in infrastructure and public works through government tenders." },
+              { title: "Real Estate Investments", desc: "Strategic acquisition and development of land and property assets." },
+              { title: "Residential Leasing", desc: "Providing quality rental spaces for families and individuals." },
+              { title: "Commercial Leasing", desc: "Offering spaces suited for offices, retail businesses and emerging enterprises." }
+            ].map((work, idx) => (
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-surface p-8 md:p-10 rounded-3xl border border-border shadow-sm flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-[#D4AF37] group w-full"
+              >
+                 <div className="w-12 h-12 bg-background rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#D4AF37]/10 transition-colors shadow-sm">
+                   <div className="w-3 h-3 bg-[#E65E19] rounded-full group-hover:bg-[#D4AF37] transition-colors" />
+                 </div>
+                 <h4 className="font-bold text-lg md:text-xl uppercase mb-4 tracking-tight group-hover:text-[#D4AF37] transition-colors">{work.title}</h4>
+                 <p className="text-stone-500 text-sm md:text-base leading-relaxed break-words">{work.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Available Properties Section */}
-      <section className="py-14 md:py-20 bg-surface/30">
+      <section id="portfolio" className="py-14 md:py-20 bg-surface/30">
         <div className="container mx-auto px-6">
-          <div className="mb-8 md:mb-12">
-            <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-3 uppercase">Current Opportunities</h4>
-            <h2 className="text-3xl md:text-4xl font-serif font-bold uppercase tracking-tight">Active Property Portfolio</h2>
+          <div className="mb-8 md:mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+              <h4 className="text-[10px] tracking-[0.3em] font-bold text-[#E65E19] mb-3 uppercase">Current Opportunities</h4>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold uppercase tracking-tight">Active Property Portfolio</h2>
+            </div>
+
+            {/* Embedded Search Filter for Services Page */}
+            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row w-full md:w-auto bg-surface border border-border shadow-md rounded-xl p-1.5 z-10 relative">
+              <div className="flex items-center px-4 py-2 border-b sm:border-b-0 sm:border-r border-border min-w-[150px]">
+                <Briefcase className="w-4 h-4 text-[#E65E19] mr-2 shrink-0" />
+                <CustomDropdown
+                  value={propertyType}
+                  onChange={setPropertyType}
+                  options={propertyTypeCoreOptions}
+                  triggerClassName="bg-transparent text-foreground outline-none w-full text-xs font-bold uppercase tracking-wider"
+                />
+              </div>
+              <div className="flex items-center flex-1 px-4 py-2">
+                <Search className="w-4 h-4 text-[#E65E19] mr-2 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Search location..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-transparent outline-none text-foreground placeholder-stone-400 text-xs font-medium"
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-[#E65E19] text-white px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-[#d14e15] transition-all flex items-center justify-center sm:mx-1 mt-2 sm:mt-0"
+              >
+                Filter
+              </button>
+            </form>
           </div>
 
+          {filteredListings.length === 0 && (
+            <div className="w-full py-20 text-center border-2 border-dashed border-border rounded-2xl opacity-70 mb-8">
+              <Search className="w-10 h-10 mx-auto text-stone-400 mb-4" />
+              <h3 className="text-xl font-bold mb-2">No properties found</h3>
+              <p className="text-stone-500 text-sm">Try adjusting your search filters to find what you're looking for.</p>
+              <button onClick={() => { setSearchQuery(''); setPropertyType('All'); setSearchParams(new URLSearchParams()); }} className="mt-4 text-[#E65E19] text-sm font-bold uppercase tracking-wider hover:underline">Clear Filters</button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7">
-            {listings.map((prop, idx) => (
+            {filteredListings.map((prop, idx) => (
               <Link to={`/project/${prop._id}`} key={prop._id || idx} className="block group">
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
@@ -2715,17 +3014,12 @@ const ContactPage = ({ theme }: { theme: 'light' | 'dark' }) => {
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest px-1">I am Interested In</label>
-                <select
+                <CustomDropdown
                   value={formData.interest}
-                  onChange={e => setFormData({ ...formData, interest: e.target.value })}
-                  className="w-full bg-surface border border-border p-4 rounded-xl outline-none focus:ring-2 focus:ring-[#E65E19]/10 transition-all text-sm appearance-none cursor-pointer text-foreground"
-                >
-                  <option className="bg-background">Buying Property</option>
-                  <option className="bg-background">Selling Property</option>
-                  <option className="bg-background">Leasing Property</option>
-                  <option className="bg-background">Investment Advice</option>
-                  <option className="bg-background">Government Tenders</option>
-                </select>
+                  onChange={(val) => setFormData({ ...formData, interest: val })}
+                  options={contactInterestOptions}
+                  triggerClassName="w-full bg-surface border border-border p-4 rounded-xl outline-none focus:ring-2 focus:ring-[#E65E19]/10 transition-all text-xs font-bold uppercase tracking-wider text-foreground"
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest px-1">Your Message</label>
@@ -3080,6 +3374,14 @@ const ProjectDetailsPage = () => {
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('daa_admin_token') || '');
   const [theme, setTheme] = useState<'light' | 'dark'>((localStorage.getItem(THEME_KEY) as 'light' | 'dark') || 'light');
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     if (theme === 'dark') document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
@@ -3126,6 +3428,23 @@ export default function App() {
         </main>
         <Footer />
       </div>
+
+      {/* ── WhatsApp Float (Global) ── */}
+      <motion.a href="https://wa.me/919560752744" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#20c65a] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95" title="Chat on WhatsApp">
+        <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+      </motion.a>
+
+      {/* ── Scroll to Top (Global) ── */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="fixed bottom-24 right-6 bg-[#E65E19] hover:bg-[#d14e15] text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center z-[9999] transition-all hover:scale-110 active:scale-95" title="Jump to Top">
+            <ArrowUp className="w-7 h-7" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
     </Router>
   );
 }
